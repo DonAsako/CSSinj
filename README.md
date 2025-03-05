@@ -52,6 +52,10 @@ python3 CSSINJ.py [-h] -H HOSTNAME -p PORT -i IDENTIFIER -l LENGTH
 python3 CSSINJ.py  -H 127.0.0.1 -p 5005 -i input.here -l 10
 ```
 
+## Todo
+
+- [ ] Fix recursivity
+
 ## Disclaimer  
 
 This tool is intended **only for ethical hacking and security research**. **Unauthorized use on systems without explicit permission is illegal**. The developer **is not responsible** for any misuse of this tool.  
