@@ -62,18 +62,22 @@ python3 CSSINJ.py [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 [✓] Connection from ::1
 [ⓘ] Token is M
 [ⓘ] Token is My
-[ⓘ] Token is MyC
-[ⓘ] Token is MyCS
-[ⓘ] Token is MyCSS
-[ⓘ] Token is MyCSSR
-[ⓘ] Token is MyCSSRF
-[ⓘ] Token is MyCSSRFT
-[ⓘ] Token is MyCSSRFTO
-[ⓘ] Token is MyCSSRFTOK
-[ⓘ] Token is MyCSSRFTOKE
-[ⓘ] Token is MyCSSRFTOKEN
-[✓] The token is : MyCSSRFTOKEN
+[ⓘ] Token is MyS
+...
+[✓] The token is : MySecreteValue
 ```
+
+## Browser-Specific Behavior
+
+The success of CSS injection attacks using @import depends on the browser's handling of CSS imports:
+- Chromium-based browsers (Chrome, Edge, Brave, etc.) allow recursive CSS imports and will process the injected styles, making them vulnerable to exfiltration techniques using @import.
+
+- Firefox, however, handles @import differently:
+  - Unlike Chromium-based browsers, Firefox processes all @import rules before applying any styles.
+  - As a result, the attack fails because the browser never processes the CSS selectors, preventing data exfiltration.
+  - This behavior causes an infinite loop where the browser keeps waiting for a CSS update that never happens.
+
+This difference in behavior makes Chromium-based browsers more susceptible to CSS injection exfiltration, while Firefox provides better protection against such attacks.
 
 ## Disclaimer  
 
