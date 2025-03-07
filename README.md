@@ -13,7 +13,7 @@
 
 ## About  
 
-**CSSINJ** is a penetration testing tool that exploits **CSS injection vulnerabilities** to exfiltrate sensitive information from web applications. This tool is designed for security professionals to assess the security posture of web applications by demonstrating how CSS can be used to extract data covertly.  
+**CSSINJ** is a penetration testing tool that exploits [**CSS injection vulnerabilities**](https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/11-Client-side_Testing/05-Testing_for_CSS_Injection) to exfiltrate sensitive information from web applications. This tool is designed for security professionals to assess the security posture of web applications by demonstrating how CSS can be used to extract data covertly.  
 
 
 ## Installation  
@@ -78,6 +78,13 @@ The success of CSS injection attacks using @import depends on the browser's hand
   - This behavior causes an infinite loop where the browser keeps waiting for a CSS update that never happens.
 
 This difference in behavior makes Chromium-based browsers more susceptible to CSS injection exfiltration, while Firefox provides better protection against such attacks.
+
+## Todo
+- [ ] Add injection parameters
+- [ ] Implement automatic detection of CSS injection vulnerabilities
+- [ ] Add an option to save results to a file
+- [ ] Add custom payload
+- [ ] Allow multiple CSS selectors for simultaneous extraction
 
 ## Disclaimer  
 
