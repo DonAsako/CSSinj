@@ -57,8 +57,6 @@ python3 CSSINJ.py [-h] -H HOSTNAME -p PORT -i IDENTIFIER
  \_____||_____/ |_____/ |_____||_| \_| \____/ (_)|_|        |_|
 
 [✓] Attacker's server started on 127.0.0.1:5005
-======== Running on http://0.0.0.0:5005 ========
-(Press CTRL+C to quit)
 [✓] Connection from ::1
 [ⓘ] Token is M
 [ⓘ] Token is My
