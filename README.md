@@ -45,7 +45,7 @@ python3 CSSINJ.py [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 | `-p, --port`           | Port number of the attacker                 |
 | `-i, --identifier`     | CSS identifier to extract data              |
 | `-s, --selector`       | CSS Attribute Selector for exfiltration     |
-| `-d, --details`        | Show detailed logs of the exfiltration process, including extracted data. |
+| `-d, --details`        | Show detailed logs of the exfiltration process, including extracted data |
 
 ### Example  
 
