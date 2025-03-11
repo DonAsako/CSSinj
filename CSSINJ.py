@@ -1,11 +1,10 @@
 import argparse
 import string
-import time
+import datetime
 import random
 import urllib.parse
 from aiohttp import web
 import asyncio
-import datetime
 
 
 class CssInjector:
