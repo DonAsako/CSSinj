@@ -18,14 +18,17 @@
 
 ## Installation  
 
-To install and set up **CSSINJ**, run the following commands:  
+To install and set up **CSSINJ** from Source, run the following commands:  
 
 ```bash
 git clone https://github.com/DonAsako/CSSinj.git
 cd CSSinj
 python3 -m venv venv  
 source venv/bin/activate
-python3 -m pip install -r requirements.txt
+python3 -m pip install --upgrade pip
+python3 -m pip install --upgrade build
+python3 -m build
+python3 -m pip install .
 ```
 
 Now you’re ready to use **CSSINJ**! 🎯  
@@ -33,7 +36,7 @@ Now you’re ready to use **CSSINJ**! 🎯
 ## Usage  
 
 ```bash
-python3 CSSINJ.py [-h] -H HOSTNAME -p PORT -i IDENTIFIER
+python3 -m cssinj [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 ```
 
 ### Options  

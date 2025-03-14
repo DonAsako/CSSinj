@@ -150,7 +150,3 @@ class CssInjector:
             return web.Response(text="404: Not Found", status=404)
 
         return middleware_handler
-
-
-if __name__ == "__main__":
-    CssInjector().start()
