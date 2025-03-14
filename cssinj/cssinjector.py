@@ -93,7 +93,7 @@ class CSSInjector:
         if self.show_details:
             console.log(
                 "exfiltration",
-                f"[{client.id}] - Exfiltrating element {len(self.clients.elements)} : {client.data}",
+                f"[{client.id}] - Exfiltrating element {len(client.elements)} : {client.data}",
             )
         return web.Response(text="ok.", content_type="image/x-icon")
 
