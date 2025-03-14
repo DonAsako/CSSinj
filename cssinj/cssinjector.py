@@ -31,7 +31,7 @@ class CSSInjector:
             for key, value in request.headers.items():
                 console.log("connection_details", f"{key} : {value}")
         client = Client(
-            host=request.host,
+            host=request.remote,
             accept=request.get("accept"),
             user_agent=request.get("user_agent"),
             event=asyncio.Event(),
