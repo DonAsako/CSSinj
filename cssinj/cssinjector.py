@@ -6,7 +6,6 @@ from cssinj.client import Client, Clients
 
 class CSSInjector:
     def __init__(self):
-        self.elements = []
         self.clients = Clients()
 
     def start(self, args):
@@ -94,7 +93,7 @@ class CSSInjector:
         if self.show_details:
             console.log(
                 "exfiltration",
-                f"[{client.id}] - Exfiltrating element {len(self.elements)} : {client.data}",
+                f"[{client.id}] - Exfiltrating element {len(self.clients.elements)} : {client.data}",
             )
         return web.Response(text="ok.", content_type="image/x-icon")
 
