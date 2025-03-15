@@ -69,7 +69,6 @@ class CSSInjector:
         client = self.clients[client_id]
         client.counter += 1
         await client.event.wait()
-        await client.event.wait()
         client.event.clear()
 
         return web.Response(
