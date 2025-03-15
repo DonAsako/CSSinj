@@ -68,8 +68,8 @@ class CSSInjector:
         client_id = request.query.get("id")
         client = self.clients[client_id]
         client.counter += 1
-        if not client.event.is_set():
-            await client.event.wait()
+        await client.event.wait()
+        await client.event.wait()
         client.event.clear()
 
         return web.Response(
