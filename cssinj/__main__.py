@@ -36,12 +36,17 @@ def main():
         action="store_true",
         help="Show detailed logs of the exfiltration process, including extracted data.",
     )
+    parser.add_argument(
+        "-c",
+        "--cli",
+        action='store_true',
+        help="Start an interactive shell",
+    )
     args = parser.parse_args()
 
     print(
         "\33[1m  _____   _____   _____  _____  _   _       _     _____  __     __\n / ____| / ____| / ____||_   _|| \\ | |     | |   |  __ \\ \\ \\   / /\n| |     | (___  | (___    | |  |  \\| |     | |   | |__) | \\ \\_/ /\n| |      \\___ \\  \\___ \\   | |  | . ` | _   | |   |  ___/   \\   /\n| |____  ____) | ____) | _| |_ | |\\  || |__| | _ | |        | |\n \\_____||_____/ |_____/ |_____||_| \\_| \\____/ (_)|_|        |_|\033[0m\n"
     )
-
     CSSInjector().start(args)
 
 
