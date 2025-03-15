@@ -20,14 +20,12 @@ def main():
         "-i",
         "--identifier",
         required=False,
-        default="all",
         help="CSS identifier to extract specific data",
     )
     parser.add_argument(
         "-s",
         "--selector",
         help="Specify a CSS Attribute Selector for exfiltration",
-        default="value",
         required=False,
     )
     parser.add_argument(
@@ -39,14 +37,25 @@ def main():
     parser.add_argument(
         "-c",
         "--cli",
-        action='store_true',
-        help="Start an interactive shell [NOT YET USABLE]",
+        action="store_true",
+        help="Start an interactive shell (currently unavailable)",
     )
-    args = parser.parse_args()
+    parser.add_argument(
+        "-a",
+        "--all",
+        action="store_true",
+        help="Exfiltrate all available data about the website (currently unavailable)",
+    )
 
+    args = parser.parse_args()
     print(
         "\33[1m  _____   _____   _____  _____  _   _       _     _____  __     __\n / ____| / ____| / ____||_   _|| \\ | |     | |   |  __ \\ \\ \\   / /\n| |     | (___  | (___    | |  |  \\| |     | |   | |__) | \\ \\_/ /\n| |      \\___ \\  \\___ \\   | |  | . ` | _   | |   |  ___/   \\   /\n| |____  ____) | ____) | _| |_ | |\\  || |__| | _ | |        | |\n \\_____||_____/ |_____/ |_____||_| \\_| \\____/ (_)|_|        |_|\033[0m\n"
     )
+
+    if args.identifier and args.all or args.selector and args.all:
+        print("You can't use -i/--identifier or -s/--selector with -a/--all !")
+        sys.exit(1)
+
     CSSInjector().start(args)
 
 
