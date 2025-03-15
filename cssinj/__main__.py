@@ -40,7 +40,7 @@ def main():
         "-c",
         "--cli",
         action='store_true',
-        help="Start an interactive shell",
+        help="Start an interactive shell [NOT YET USABLE]",
     )
     args = parser.parse_args()
 
