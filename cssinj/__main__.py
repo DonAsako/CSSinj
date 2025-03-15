@@ -17,16 +17,16 @@ def main():
         "-p", "--port", required=True, type=int, help="Port number of attacker"
     )
     parser.add_argument(
-        "-i",
-        "--identifier",
+        "-e",
+        "--element",
         required=False,
-        help="CSS identifier to extract specific data",
+        help="Specify the HTML element to extract data from",
     )
     parser.add_argument(
-        "-s",
-        "--selector",
-        help="Specify a CSS Attribute Selector for exfiltration",
+        "-a",
+        "--attribut",
         required=False,
+        help="Specify an element Attribute Selector for exfiltration",
     )
     parser.add_argument(
         "-d",
@@ -40,21 +40,11 @@ def main():
         action="store_true",
         help="Start an interactive shell (currently unavailable)",
     )
-    parser.add_argument(
-        "-a",
-        "--all",
-        action="store_true",
-        help="Exfiltrate all available data about the website (currently unavailable)",
-    )
 
     args = parser.parse_args()
     print(
         "\33[1m  _____   _____   _____  _____  _   _       _     _____  __     __\n / ____| / ____| / ____||_   _|| \\ | |     | |   |  __ \\ \\ \\   / /\n| |     | (___  | (___    | |  |  \\| |     | |   | |__) | \\ \\_/ /\n| |      \\___ \\  \\___ \\   | |  | . ` | _   | |   |  ___/   \\   /\n| |____  ____) | ____) | _| |_ | |\\  || |__| | _ | |        | |\n \\_____||_____/ |_____/ |_____||_| \\_| \\____/ (_)|_|        |_|\033[0m\n"
     )
-
-    if args.identifier and args.all or args.selector and args.all:
-        print("You can't use -i/--identifier or -s/--selector with -a/--all !")
-        sys.exit(1)
 
     CSSInjector().start(args)
 
