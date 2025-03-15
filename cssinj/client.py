@@ -11,9 +11,9 @@ class Client:
     accept: str
     status: bool = dataclasses.field(default=True, init=False)
     counter: int = dataclasses.field(default=0, init=False)
-    data: str = dataclasses.field(default="", init=False)
     event: asyncio.Event
     elements: list = dataclasses.field(default_factory=list)
+    data: str = dataclasses.field(default_factory=str, init=False)
     _id_counter: int = dataclasses.field(default=0, init=False, repr=False)
 
     def __post_init__(self):
