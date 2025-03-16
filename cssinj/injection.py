@@ -7,8 +7,8 @@ def generate_payload(hostname, port, attribut, client, element):
     elements_attributs = []
     for client_element in client.elements:
         for element_attribut in client_element.attributs:
-            if element_attribut == attribut:
-                elements_attributs.append(element_attributs)
+            if element_attribut.name == attribut:
+                elements_attributs.append(element_attribut)
 
     # Check if the token is complete
     stri += f"html:has({element}[{attribut}={repr(client.data)}]"
