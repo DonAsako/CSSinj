@@ -2,6 +2,7 @@
 import sys
 import argparse
 
+
 def main():
     parser = argparse.ArgumentParser(
         prog="CSSINJ.py",
@@ -55,6 +56,24 @@ def main():
         required=True,
         help="Specify the target URL to scan for CSS injection vulnerabilities.",
     )
+    scanner_parser.add_argument(
+        "-d",
+        "--delay",
+        default="100",
+        help="Specify the delay in ms between each request.",
+    )
+    scanner_parser.add_argument(
+        "-c", "--cookie", action="append", help="Specify a cookie for request."
+    )
+    scanner_parser.add_argument(
+        "-H", "--headers", action="append", help="Specify an header."
+    )
+    scanner_parser.add_argument("-U", "--user-agent", help="Specify an User-Agent.")
+    # scanner_parser.add_argument(
+    #     "--proxy",
+    #     action="store_true",
+    #     help="If you want to use a proxy."
+    # )
     args = parser.parse_args()
 
     print(
@@ -62,16 +81,13 @@ def main():
     )
     if args.command == "inject":
         from cssinj.cssinjector import CSSInjector
+
         CSSInjector().start(args)
+
     elif args.command == "scan":
         from cssinj.scanner import Scanner
-        scanner = Scanner()
-        try:
-            scanner.start(args.url)
-        except RuntimeError as e:
-            sys.exit(1)
-        finally:
-            scanner.quit()
+
+        scanner = Scanner().start(args)
 
 
 if __name__ == "__main__":

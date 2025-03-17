@@ -17,7 +17,7 @@ classifiers = [
 ]
 dependencies = [
     "aiohttp",
-    "selenium"
+    "requests"
 ]
 
 [project.urls]

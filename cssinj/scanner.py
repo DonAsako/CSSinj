@@ -1,14 +1,14 @@
 import sys
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-
+import requests
+from cssinj.console import Console
+import re
 
 class Scanner:
     def __init__(self):
-        self.driver = None
+        pass
 
     def get_input(self):
-        self.driver = None
+        pass
 
     def get_http_request(self):
         pass
@@ -16,22 +16,36 @@ class Scanner:
     def get_url(self):
         pass
 
-    def start(self, url):
-        try:
-            # Detach Browser For Debug
-            options = Options()
-            options.add_experimental_option("detach", True)
+    def start(self, args):
+        self.url = args.url
+        self.headers = args.headers
+        self.delay = args.delay
+        self.cookie = args.cookie
+        self.user_agent = args.user_agent
 
-            # Use Chromium
-            self.driver = webdriver.Chrome(options=options)
+        
+        headers = {}
 
-        except Exception as e:
-            print(f"Error during driver initialization : {e}")
-            sys.exit(1)
+        # clean header
+        for header in self.headers:
+            key, value = header.split(":", maxsplit=1)
+            key = re.sub(" +", "", key)
+            value = re.sub(r"^\s+", "", value)
+            headers[key] = value
 
-        self.driver.get(url)
+        self.headers = headers
 
+        if self.cookie:
+            self.headers["cookie"] = "; ".join(self.cookie)
 
-    def quit(self):
-        self.driver.quit()
+        # Overwrite Headers
+        if self.user_agent:
+            self.headers["user-agent"] = self.user_agent
+        
 
+        self.console = Console()
+
+        # show config to user
+        self.console.log("server", f"Starting scan of {self.url} with following config :")        
+        for key, value in self.headers.items():
+            self.console.log("connection_details", f"{key} : {value}")
