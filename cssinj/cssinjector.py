@@ -3,7 +3,7 @@ import asyncio
 from cssinj import injection
 from cssinj.client import Client, Clients
 from cssinj.console import Console
-from cssinj.dom import Attribut, Element
+from cssinj.utils.dom import Attribut, Element
 
 
 class CSSInjector:
@@ -99,7 +99,7 @@ class CSSInjector:
         client.event.set()
 
         client.data = request.query.get("token")
-    
+
         if self.show_details:
             self.console.log(
                 "exfiltration",

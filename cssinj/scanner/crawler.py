@@ -1,6 +1,7 @@
 import re
 import requests
-from cssinj.scanner.html_parser import HtmlParser
+from cssinj.utils.html_parser import HtmlParser
+
 
 class Crawler:
     def __init__(self, start_url: str):
@@ -32,7 +33,6 @@ class Crawler:
         response = requests.get(url)
 
 
-        
 if __name__ == "__main__":
     crawler = Crawler("http://localhost:5000/admi?user=ok")
     crawler.search()

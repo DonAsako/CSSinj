@@ -2,6 +2,7 @@ import dataclasses
 from typing import Optional
 from collections.abc import MutableSequence
 
+
 @dataclasses.dataclass
 class Attribut:
     id: int = dataclasses.field(default=0, init=False)
