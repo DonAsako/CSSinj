@@ -25,24 +25,34 @@ class Crawler:
     def search(self):
         while len(self.pending_urls) != 0:
             for url in self.pending_urls:
-                self.visite_url(url)
-                self.pending_urls.remove(url)
                 self.visited_urls.append(url)
+                self.pending_urls.remove(url)
+                self.visite_url(url)
+                print("Visited : " + url)
+
+    def clean_url(self, url: str) -> str:
+        url = re.sub(r"(?<=://)[/]+", "/", url)
+        url = re.sub(r"(?<=:5000)/+", "/", url)
+        return url
 
     def visite_url(self, url: str) -> str:
         response = requests.get(url)
         html = response.text
         parser = HtmlParser()
         parser.feed(html)
-        # Get all href: 
-        links = parser.get_value_by_attr_name('href')
+
+        # Get all href:
+        links = parser.get_value_by_attr_name("href")
+
+        # Append url to pending
         for link in links:
             if link.startswith(self.base_url):
-                if link not in self.visited_urls:
-                    self.pending_urls.append(link)
+                if link not in self.visited_urls + self.pending_urls:
+                    url = self.clean_url(link)
+                    self.pending_urls.append(url)
+
             if link.startswith("/") or link.startswith(".."):
-                link = self.base_url+"/"+link
-                link = re.sub(r'(?<=://)[/]+', '/', link) 
-                link = re.sub(r'(?<=:5000)/+', '/', link)
-                if link not in self.visited_urls:
-                    self.pending_urls.append(link)
+                link = self.base_url + "/" + link
+                url = self.clean_url(link)
+                if url not in self.visited_urls + self.pending_urls:
+                    self.pending_urls.append(url)
