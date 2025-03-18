@@ -20,7 +20,7 @@ class Crawler:
 
     def get_base_url(self, url: str) -> str:
         if self.is_valid_url(url):
-            return re.search(r"^(https?:\/\/[a-zA-Z0-9.-]+(:\d+)?)", url).group()
+            return re.search(r"^(https?:\/\/[a-zA-Z0-9.-]+(:\d+)?/)", url).group()
 
     def search(self):
         while len(self.pending_urls) != 0:
@@ -31,8 +31,18 @@ class Crawler:
 
     def visite_url(self, url: str) -> str:
         response = requests.get(url)
-
-
-if __name__ == "__main__":
-    crawler = Crawler("http://localhost:5000/admi?user=ok")
-    crawler.search()
+        html = response.text
+        parser = HtmlParser()
+        parser.feed(html)
+        # Get all href: 
+        links = parser.get_value_by_attr_name('href')
+        for link in links:
+            if link.startswith(self.base_url):
+                if link not in self.visited_urls:
+                    self.pending_urls.append(link)
+            if link.startswith("/") or link.startswith(".."):
+                link = self.base_url+"/"+link
+                link = re.sub(r'(?<=://)[/]+', '/', link) 
+                link = re.sub(r'(?<=:5000)/+', '/', link)
+                if link not in self.visited_urls:
+                    self.pending_urls.append(link)
