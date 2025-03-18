@@ -29,10 +29,10 @@ class HtmlParser(HTMLParser):
 
         return elements_by_attr
 
-    def get_all_value_by_attr_name(self, attr_name) -> list:
+    def get_value_by_attr_name(self, attr_name) -> list:
         elements_by_attr = self.get_all_value_by_attr(attr_name)
         values = []
         for element in elements_by_attr:
             for attribut in element.attributs:
-                if attribut.name = attr_name:
+                if attribut.name == attr_name:
                     values.append(attribut.value)
