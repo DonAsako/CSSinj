@@ -1,11 +1,11 @@
 import re
-import requests
 from cssinj.utils.html_parser import HtmlParser
 
 
 class Crawler:
-    def __init__(self, start_url: str):
+    def __init__(self, start_url: str, requester):
         self.start_url = start_url
+        self.requester = requester
         self.keep_urls = []
         self.visited_urls = []
         self.pending_urls = [start_url]
@@ -29,6 +29,8 @@ class Crawler:
                 self.visited_urls.append(url)
                 self.pending_urls.remove(url)
                 self.visite_url(url, (element_name, attribut_name))
+                print(url)
+
         return self.keep_urls
 
     def clean_url(self, url: str) -> str:
@@ -52,7 +54,7 @@ class Crawler:
             self.keep_urls.append(url)
 
     def visite_url(self, url: str, filter: tuple) -> str:
-        response = requests.get(url)
+        response = self.requester.get(url)
         html = response.text
         parser = HtmlParser()
         parser.feed(html)
