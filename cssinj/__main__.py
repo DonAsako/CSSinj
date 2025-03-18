@@ -85,7 +85,7 @@ def main():
         CSSInjector().start(args)
 
     elif args.command == "scan":
-        from cssinj.scanner import Scanner
+        from cssinj.scanner.scanner import Scanner
 
         scanner = Scanner().start(args)
 
