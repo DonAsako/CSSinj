@@ -66,10 +66,10 @@ def main():
         "-c",
         "--crawler",
         action="store_true",
-        help="Specify if you want to crawl the website"
+        help="Specify if you want to crawl the website",
     )
     scanner_parser.add_argument(
-        "-c", "--cookie", action="append", help="Specify a cookie for request."
+        "-b", "--cookie", action="append", help="Specify a cookie for request."
     )
     scanner_parser.add_argument(
         "-H", "--headers", action="append", help="Specify an header."
