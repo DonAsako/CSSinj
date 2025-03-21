@@ -60,11 +60,14 @@ class Scanner:
         for key, value in headers.items():
             self.console.log("connection_details", f"{key} : {value}")
 
-        crawler = Crawler(self.url, self.requester)
+        if args.crawler:
+            crawler = Crawler(self.url, self.requester)
 
-        self.queue = crawler.search("input", "")
-        print(f"We have {len(self.queue)} links in queue")
-        for link in self.queue:
-            resp = self.requester.get(link)
-            print(resp.content)
-            self.analyze_response(resp)
+            self.queue = crawler.search("input", "")
+            print(f"We have {len(self.queue)} links in queue")
+            for link in self.queue:
+                resp = self.requester.get(link)
+                print(resp.content)
+                self.analyze_response(resp)
+        else:
+            pass

@@ -63,6 +63,12 @@ def main():
         help="Specify the delay in ms between each request.",
     )
     scanner_parser.add_argument(
+        "-c",
+        "--crawler",
+        action="store_true",
+        help="Specify if you want to crawl the website"
+    )
+    scanner_parser.add_argument(
         "-c", "--cookie", action="append", help="Specify a cookie for request."
     )
     scanner_parser.add_argument(
