@@ -114,6 +114,10 @@ The success of CSS injection attacks using @import depends on the browser's hand
 This difference in behavior makes Chromium-based browsers more susceptible to CSS injection exfiltration, while Firefox provides better protection against such attacks.
 
 ## Todo
+- General : 
+  - [ ] Add error Handler
+  - [ ] Add test
+
 - Injection : 
   - [ ] Add injection parameters
   - [ ] Add an option to save results to a file
