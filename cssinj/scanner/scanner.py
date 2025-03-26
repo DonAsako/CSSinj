@@ -8,6 +8,7 @@ from cssinj.utils.requester import Requester
 class Scanner:
     def __init__(self):
         self.requester = Requester()
+        self.queue = []
 
     def analyze_response(self, response):
         headers = response.headers
@@ -65,9 +66,10 @@ class Scanner:
 
             self.queue = crawler.search("input", "")
             print(f"We have {len(self.queue)} links in queue")
-            for link in self.queue:
-                resp = self.requester.get(link)
-                print(resp.content)
-                self.analyze_response(resp)
         else:
-            pass
+            self.queue = [self.url]
+
+        # Scan
+        for link in self.queue:
+            resp = self.requester.get(link)
+            self.analyze_response(resp)
