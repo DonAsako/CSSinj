@@ -1,6 +1,7 @@
-from aiohttp import web
+import time
 import asyncio
-from cssinj import injection
+from aiohttp import web
+from cssinj.exfiltrator import injection
 from cssinj.client import Client, Clients
 from cssinj.console import Console
 from cssinj.utils.dom import Attribut, Element
@@ -89,7 +90,10 @@ class CSSInjector:
         client.counter += 1
 
         await client.event.wait()
+
         client.event.clear()
+
+        self.client.last_request_at = time.time()
 
         return web.Response(
             text=injection.generate_payload_recursive_import(

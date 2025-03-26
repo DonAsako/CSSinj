@@ -13,7 +13,6 @@ class Client:
     status: bool = dataclasses.field(default=True, init=False)
     counter: int = dataclasses.field(default=0, init=False)
     event: asyncio.Event
-    last_request_at: float = dataclasses.field(default_factory=float, init=False)
     elements: list = dataclasses.field(default_factory=list)
     data: str = dataclasses.field(default_factory=str, init=False)
     _id_counter: int = dataclasses.field(default=0, init=False, repr=False)
@@ -21,7 +20,6 @@ class Client:
     def __post_init__(self):
         self.__class__._id_counter += 1
         self.id = self.__class__._id_counter
-        self.last_request_at = time.time()
 
 
 class Clients(MutableSequence):
