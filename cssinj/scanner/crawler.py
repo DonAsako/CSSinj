@@ -34,7 +34,9 @@ class Crawler:
         return self.keep_urls
 
     def clean_url(self, url: str) -> str:
+        # Clean '/' after ://
         url = re.sub(r"(?<=://)[/]+", "/", url)
+        # Clean '/' after port
         url = re.sub(r"(:\d+)(/)+", r"\1/", url)
         return url
 

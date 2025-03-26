@@ -48,7 +48,7 @@ def main():
 
     scanner_parser = sub_parser.add_parser(
         "scan",
-        help="Check if a website is vulnerable to CSS injection.",
+        help="Check if a website is vulnerable to CSS injection. !!! EXPERIMENTAL !!!!",
     )
     scanner_parser.add_argument(
         "-u",
