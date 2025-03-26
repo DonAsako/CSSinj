@@ -1,0 +1,3 @@
+HTTP_HEADERS = []
+ELEMENTS = []
+ATTRIBUTS = []
