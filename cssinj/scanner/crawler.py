@@ -35,7 +35,7 @@ class Crawler:
 
     def clean_url(self, url: str) -> str:
         url = re.sub(r"(?<=://)[/]+", "/", url)
-        url = re.sub(r"(?<=:5000)/+", "/", url)
+        url = re.sub(r"(:\d+)(/)+", r"\1/", url)
         return url
 
     def keep_url(self, url, parser, filter):
