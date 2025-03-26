@@ -13,9 +13,12 @@ class Scanner:
     def analyze_response(self, response):
         headers = response.headers
         cookies = response.cookies
+        text = response.text
         # Try to inject input
         # Try to inject headers
-        # Try to check if different token
+        # Try to check if differences
+        print(response.headers)
+        print(response.text)
 
         # https://developer.mozilla.org/fr/docs/Web/HTTP/Reference/Headers check if one header is not in the list
 

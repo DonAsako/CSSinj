@@ -10,6 +10,7 @@ class Crawler:
         self.visited_urls = []
         self.pending_urls = [start_url]
         self.base_url = self.get_base_url(start_url)
+        self.keep_urls.append(self.base_url)
         if self.base_url not in self.pending_urls:
             self.pending_urls.append(self.base_url)
 
@@ -26,10 +27,9 @@ class Crawler:
     def search(self, element_name: str = "", attribut_name: str = "") -> str:
         while len(self.pending_urls) != 0:
             for url in self.pending_urls:
+                self.visite_url(url, (element_name, attribut_name))
                 self.visited_urls.append(url)
                 self.pending_urls.remove(url)
-                self.visite_url(url, (element_name, attribut_name))
-                print(url)
 
         return self.keep_urls
 
