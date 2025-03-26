@@ -23,6 +23,7 @@ class Client:
         self.id = self.__class__._id_counter
         self.last_request_at = time.time()
 
+
 class Clients(MutableSequence):
     def __init__(self):
         super().__init__()

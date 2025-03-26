@@ -40,12 +40,12 @@ def main():
         help="Show detailed logs of the exfiltration process, including extracted data.",
     )
     injection_parser.add_argument(
-        "-c",
-        "--cli",
-        action="store_true",
-        help="Start an interactive shell (currently unavailable)",
+        "-m",
+        "--method",
+        default="recursive",
+        choices=["recusive", "font-face"],
+        help="Specify the type of exfiltration",
     )
-
     scanner_parser = sub_parser.add_parser(
         "scan",
         help="Check if a website is vulnerable to CSS injection. !!! EXPERIMENTAL !!!!",

