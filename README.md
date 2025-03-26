@@ -36,7 +36,7 @@ Now you’re ready to use **CSSINJ**! 🎯
 ## Usage  
 
 ```bash
-python3 -m cssinj [-h] -H HOSTNAME -p PORT -i IDENTIFIER
+python3 -m cssinj inject [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 ```
 
 ### Options  
@@ -68,7 +68,7 @@ python3 -m cssinj [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 #### Using a specific CSS identifier : 
 
 ```bash
-~ python3 CSSINJ.py -H 127.0.0.1 -p 5005 -e input
+~ python3 CSSINJ.py inject -H 127.0.0.1 -p 5005 -e input
   _____   _____   _____  _____  _   _       _     _____  __     __
  / ____| / ____| / ____||_   _|| \ | |     | |   |  __ \ \ \   / /
 | |     | (___  | (___    | |  |  \| |     | |   | |__) | \ \_/ /
@@ -87,7 +87,7 @@ python3 -m cssinj [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 #### Using a specific CSS attribute selector and a generic CSS identifier:
 
 ```bash
-~ python3 CSSINJ.py -H 127.0.0.1 -p 5005 -e \* -a src
+~ python3 CSSINJ.py inject -H 127.0.0.1 -p 5005 -e \* -a src
   _____   _____   _____  _____  _   _       _     _____  __     __
  / ____| / ____| / ____||_   _|| \ | |     | |   |  __ \ \ \   / /
 | |     | (___  | (___    | |  |  \| |     | |   | |__) | \ \_/ /
