@@ -127,11 +127,11 @@ class CSSInjector:
 
             if path.startswith("/start"):
                 return await self.handle_start(request)
-            elif path.startswith("/next"):
+            elif path.startswith("/n"):
                 return await self.handle_next(request)
-            elif path.startswith("/valid"):
+            elif path.startswith("/v"):
                 return await self.handle_valid(request)
-            elif path.startswith("/end"):
+            elif path.startswith("/e"):
                 return await self.handle_end(request)
 
             return web.Response(text="404: Not Found", status=404)
