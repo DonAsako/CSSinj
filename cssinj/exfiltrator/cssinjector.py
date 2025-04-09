@@ -20,13 +20,20 @@ class CSSInjector:
         self.app = web.Application()
         self.app.middlewares.append(self.dynamic_router_middleware)
         self.console = Console()
-        web.run_app(
-            self.app,
-            port=self.port,
-            print=self.console.log(
-                "server", f"Attacker's server started on {args.hostname}:{args.port}"
-            ),
+
+        asyncio.run(self.start_server())
+
+    async def start_server(self):
+        runner = web.AppRunner(self.app)
+        await runner.setup()
+
+        site = web.TCPSite(runner, self.hostname, self.port)
+        await site.start()
+        self.console.log(
+            "server", f"Attacker's server started on {self.hostname}:{self.port}"
         )
+        while True:
+            await asyncio.sleep(3600)
 
     async def handle_start(self, request):
         client = Client(
