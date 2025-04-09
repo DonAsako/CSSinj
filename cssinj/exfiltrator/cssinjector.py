@@ -35,6 +35,12 @@ class CSSInjector:
         while True:
             await asyncio.sleep(3600)
 
+    async def stop_server(self):
+        self.console.log("server", f"Attacker's server cleaning up.")
+        if self.runner:
+            await self.runner.cleanup()
+        self.console.log("server", f"Attacker's server stopped.")
+
     async def handle_start(self, request):
         client = Client(
             host=request.remote,
