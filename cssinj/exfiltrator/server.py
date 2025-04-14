@@ -2,8 +2,10 @@ from cssinj.exfiltrator import injection
 from cssinj.client import Client
 from cssinj.console import Console
 from cssinj.utils.dom import Attribut, Element
+from cssinj.utils.error import InjectionError
 from aiohttp import web
 import asyncio
+
 
 class Server:
     def __init__(self, clients, args):
@@ -73,7 +75,7 @@ class Server:
 
         client = self.clients[client_id]
 
-        assert client is not None, f"Unknown client id"
+        assert client is not None, InjectionError(f"Unknown client id")
 
         element = Element(name=self.element)
         element.attributs.append(Attribut(name=self.attribut, value=client.data))
@@ -97,7 +99,7 @@ class Server:
         client_id = request.query.get("cid")
         client = self.clients[client_id]
 
-        assert client is not None, f"Unknown client id"
+        assert client is not None, InjectionError(f"Unknown client id")
 
         client.counter += 1
 
@@ -120,7 +122,7 @@ class Server:
         client_id = request.query.get("cid")
         client = self.clients[client_id]
 
-        assert client is not None, f"Unknown client id"
+        assert client is not None, InjectionError(f"Unknown client id")
 
         client.event.set()
         client.data = request.query.get("t")
