@@ -1,4 +1,5 @@
 import re
+from cssinj.scanner.utils import is_valid_url
 from cssinj.utils.html_parser import HtmlParser
 
 
@@ -14,14 +15,9 @@ class Crawler:
         if self.base_url not in self.pending_urls:
             self.pending_urls.append(self.base_url)
 
-    def is_valid_url(self, url: str) -> str:
-        return re.match(
-            r"^https?:\/\/[a-zA-Z0-9-\.]+(?:\:[0-9]+)?(\/[^\s]*)?$",
-            url,
-        )
 
     def get_base_url(self, url: str) -> str:
-        if self.is_valid_url(url):
+        if is_valid_url(url):
             return re.search(r"^(https?:\/\/[a-zA-Z0-9.-]+(:\d+)?/)", url).group()
 
     def search(self, element_name: str = "", attribut_name: str = "") -> str:

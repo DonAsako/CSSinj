@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import argparse
+from cssinj.console import Console
 
 
 def main():
@@ -93,7 +94,10 @@ def main():
     elif args.command == "scan":
         from cssinj.scanner.scanner import Scanner
 
-        scanner = Scanner().start(args)
+        try:
+            scanner = Scanner().start(args)
+        except Exception as ex:
+            Console.error_handler(ex, context={"source": "scanner"})
 
 
 if __name__ == "__main__":

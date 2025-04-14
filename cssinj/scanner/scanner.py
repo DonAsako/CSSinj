@@ -1,8 +1,10 @@
 import sys
 import re
 from cssinj.console import Console
+from cssinj.scanner.utils import is_valid_url
 from cssinj.scanner.crawler import Crawler
 from cssinj.utils.requester import Requester
+from cssinj.utils.error import ScannerError
 
 
 class Scanner:
@@ -23,16 +25,16 @@ class Scanner:
     def start(self, args):
         self.url = args.url
         self.console = Console()
+        assert is_valid_url(self.url), ScannerError("Invalid URL")
 
         try:
             delay = int(args.delay)
         except ValueError:
-            print("Invalid delay !")
-            exit(1)
+            assert ScannerError("Invalid delay")
 
         cookie = args.cookie
         user_agent = args.user_agent
-
+        
         headers = {}
 
         if headers:
