@@ -120,11 +120,11 @@ This difference in behavior makes Chromium-based browsers more susceptible to CS
   - [ ] Edit Terminal
 
 - Injection : 
-  - [ ] Add injection parameters
+  - [x] Add injection parameters
   - [ ] Add an option to save results to a file
   - [ ] Allow multiple CSS selectors for simultaneous extraction
   - [ ] Add g all of the page
-  - [ ] Refract cssinjector.py
+  - [x] Refract cssinjector.py
   - [ ] Add timeout
 
 - Scan :
