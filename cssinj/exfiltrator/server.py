@@ -156,7 +156,7 @@ class Server:
     @web.middleware
     async def error_middleware(self, request, handler):
         try:
-            response = await handler(request)   
+            response = await handler(request)
             return response
         except Exception as ex:
             Console.error_handler(ex, context={"source": "middleware"})

@@ -17,6 +17,7 @@ class Console:
             print(f"[{now.strftime("%Y-%m-%d %H:%M:%S")}] ⚙️ {message}")
         elif status == "error":
             print(f"[{now.strftime("%Y-%m-%d %H:%M:%S")}] ❌ {message}")
+
     @staticmethod
     def error_handler(exception: Exception, context: dict):
         Console.log("error", exception)

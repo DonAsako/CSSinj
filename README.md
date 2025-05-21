@@ -87,7 +87,7 @@ python3 -m cssinj inject [-h] -H HOSTNAME -p PORT -i IDENTIFIER
 #### Using a specific CSS attribute selector and a generic CSS identifier:
 
 ```bash
-~ python3 CSSINJ.py inject -H 127.0.0.1 -p 5005 -e \* -a src
+~ python3 CSSINJ.py -H 127.0.0.1 -p 5005 -e \* -a src
   _____   _____   _____  _____  _   _       _     _____  __     __
  / ____| / ____| / ____||_   _|| \ | |     | |   |  __ \ \ \   / /
 | |     | (___  | (___    | |  |  \| |     | |   | |__) | \ \_/ /
@@ -127,9 +127,6 @@ This difference in behavior makes Chromium-based browsers more susceptible to CS
   - [x] Refract cssinjector.py
   - [ ] Add timeout
 
-- Scan :
-  - [ ] Implement automatic detection of CSS injection vulnerabilities
-  - [ ] Implement Proxy
 
 ## Disclaimer  
 

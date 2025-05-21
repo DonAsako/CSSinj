@@ -9,10 +9,7 @@ class CSSInjector:
         self.clients = Clients()
 
     def start(self, args):
-        self.server = Server(
-            args=args,
-            clients=self.clients
-        )
+        self.server = Server(args=args, clients=self.clients)
         asyncio.run(self.server.start())
 
     def stop(self):
