@@ -127,11 +127,12 @@ class Server:
         client.event.set()
         client.data = request.query.get("t")
 
-        if self.show_details:
+        if self.show_details or self.method == "font-face":
             Console.log(
                 "exfiltration",
                 f"[{client.id}] - Exfiltrating element {len(client.elements)} : {client.data}",
             )
+
         if self.method == "recursive":
             return web.Response(text="ok.", content_type="image/x-icon")
         elif self.method == "font-face":
