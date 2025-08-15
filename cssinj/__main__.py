@@ -20,12 +20,14 @@ def main():
         "-e",
         "--element",
         required=False,
+        default="input",
         help="Specify the HTML element to extract data from",
     )
     parser.add_argument(
         "-a",
         "--attribut",
         required=False,
+        default="value",
         help="Specify an element Attribute Selector for exfiltration",
     )
     parser.add_argument(
