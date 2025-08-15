@@ -65,7 +65,6 @@ class Server:
                 text=injection.generate_payload_font_face(
                     hostname=self.hostname,
                     port=self.port,
-                    attribut=self.attribut,
                     element=self.element,
                     client=client,
                 ),
@@ -129,6 +128,9 @@ class Server:
 
         client.event.set()
         client.data = request.query.get("t")
+        if self.method == "font-face":
+            element = Element(name=client.data)
+            client.elements.append(element)
         self.output_file.update()
 
         if self.show_details or self.method == "font-face":

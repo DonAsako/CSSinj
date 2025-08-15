@@ -30,14 +30,23 @@ class OutputFile(File):
     def __init__(self, file_name, clients):
         super().__init__(file_name)
         self.clients = clients
-        self.client_fields = ["id", "user_agent", "counter", "elements", "data"]
+        self.client_fields = ["id", "user_agent", "elements"]
+
+    def attributs_to_dict(self, attributs):
+        attributs_dict = {}
+        for attribut in attributs:
+            attributs_dict[attribut.name] = attribut.value
+        return attributs_dict
 
     def element_to_dict(self, element):
-        return {
+        element_dict = {
             "id": element.id,
             "name": element.name,
-            "attributs": [{a.name: a.value} for a in element.attributs],
         }
+        if element.attributs:
+            element_dict["attributs"] = self.attributs_to_dict(element.attributs)
+
+        return element_dict
 
     def client_to_dict(self, client):
         client_dict = {
@@ -49,5 +58,7 @@ class OutputFile(File):
         return client_dict
 
     def update(self):
-        clients_list = [self.client_to_dict(client) for client in self.clients]
+        clients_list = {
+            "clients": [self.client_to_dict(client) for client in self.clients]
+        }
         self.update_file(json.dumps(clients_list, indent=4))
