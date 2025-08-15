@@ -56,7 +56,8 @@ def parse_args():
     parser.add_argument(
         "-o",
         "--output",
-        default="output.json",
+        nargs="?",
+        const="output.json",
         help="File to store the exfiltrated data in JSON format",
     )
     return parser.parse_args()
