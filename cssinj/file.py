@@ -30,7 +30,7 @@ class OutputFile(File):
     def __init__(self, file_name, clients):
         super().__init__(file_name)
         self.clients = clients
-        self.client_fields = ["id", "user_agent", "elements"]
+        self.client_fields = ["id", "headers", "elements"]
 
     def attributs_to_dict(self, attributs):
         attributs_dict = {}

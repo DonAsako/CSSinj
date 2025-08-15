@@ -43,11 +43,12 @@ class Server:
         client = Client(
             host=request.remote,
             accept=request.get("accept"),
-            user_agent=request.get("user_agent"),
+            headers=dict(request.headers),
             event=asyncio.Event(),
         )
         self.clients.append(client)
-        self.output_file.update()
+        if self.output_file:
+            self.output_file.update()
         Console.log("connection", f"Connection from {client.host}")
         Console.log("connection_details", f"ID : {client.id}")
         client.event.set()
@@ -81,7 +82,8 @@ class Server:
         element = Element(name=self.element)
         element.attributs.append(Attribut(name=self.attribut, value=client.data))
         client.elements.append(element)
-        self.output_file.update()
+        if self.output_file:
+            self.output_file.update()
 
         client.event.set()
 
@@ -131,7 +133,8 @@ class Server:
         if self.method == "font-face":
             element = Element(name=client.data)
             client.elements.append(element)
-        self.output_file.update()
+        if self.output_file:
+            self.output_file.update()
 
         if self.show_details or self.method == "font-face":
             Console.log(

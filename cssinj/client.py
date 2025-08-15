@@ -8,7 +8,7 @@ import time
 class Client:
     id: int = dataclasses.field(default=0, init=False)
     host: str
-    user_agent: str
+    headers: dict
     accept: str
     status: bool = dataclasses.field(default=True, init=False)
     counter: int = dataclasses.field(default=0, init=False)
