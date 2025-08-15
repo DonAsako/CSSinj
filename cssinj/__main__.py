@@ -43,6 +43,12 @@ def main():
         choices=["recusive", "font-face"],
         help="Specify the type of exfiltration",
     )
+    parser.add_argument(
+        "-o",
+        "--output",
+        default="output",
+        help="File to store the exfiltrated data in JSON format",
+    )
     args = parser.parse_args()
 
     print(

@@ -50,6 +50,7 @@ python3 -m cssinj [-h] -H HOSTNAME -p PORT [-e ELEMENT] [-a ATTRIBUT] [-d] [-m {
 | `-a, --attribut`       | Specify an element Attribute Selector for exfiltration     |
 | `-d, --details`        | Show detailed logs of the exfiltration process, including extracted data |
 | `-m, --method`        | Specify the type of exfiltration (recusive or font-face) |
+| `-o, --output`        | File to store the exfiltrated data in JSON format |
 
 ### Example  
 
@@ -147,6 +148,7 @@ This difference in behavior makes Chromium-based browsers more susceptible to CS
 ## Todo
 - General : 
   - [ ] Add error Handler
+    - [ ] File error Handler
   - [ ] Add test
   - [ ] Edit Terminal
 

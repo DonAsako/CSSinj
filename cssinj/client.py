@@ -48,6 +48,9 @@ class Clients(MutableSequence):
     def __setitem__(self, i, client):
         self.client_list.append(client)
 
+    def __iter__(self):
+        return iter(self.client_list)
+
     def append(self, client):
         self.client_list.append(client)
 

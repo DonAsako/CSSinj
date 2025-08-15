@@ -8,7 +8,7 @@ import asyncio
 
 
 class Server:
-    def __init__(self, clients, args):
+    def __init__(self, clients, args, output_file):
         self.hostname = args.hostname
         self.port = args.port
         self.element = args.element
@@ -16,6 +16,7 @@ class Server:
         self.show_details = args.details
         self.method = args.method
         self.clients = clients
+        self.output_file = output_file
         self.app = web.Application(
             middlewares=[self.error_middleware, self.dynamic_router_middleware]
         )
@@ -46,6 +47,7 @@ class Server:
             event=asyncio.Event(),
         )
         self.clients.append(client)
+        self.output_file.update()
         Console.log("connection", f"Connection from {client.host}")
         Console.log("connection_details", f"ID : {client.id}")
         client.event.set()
@@ -80,6 +82,7 @@ class Server:
         element = Element(name=self.element)
         element.attributs.append(Attribut(name=self.attribut, value=client.data))
         client.elements.append(element)
+        self.output_file.update()
 
         client.event.set()
 
@@ -126,6 +129,7 @@ class Server:
 
         client.event.set()
         client.data = request.query.get("t")
+        self.output_file.update()
 
         if self.show_details or self.method == "font-face":
             Console.log(
