@@ -36,7 +36,7 @@ Now you’re ready to use **CSSINJ**! 🎯
 ## Usage  
 
 ```bash
-python3 -m cssinj [-h] -H HOSTNAME -p PORT [-e ELEMENT] [-a ATTRIBUT] [-d] [-m {recusive,font-face}]
+python3 -m cssinj [-h] -H HOSTNAME -p PORT [-e ELEMENT] [-a ATTRIBUT] [-d] [-m {recusive,font-face}] [-o OUTPUT]
 ```
 
 ### Options  

@@ -4,17 +4,27 @@ import argparse
 from cssinj.exfiltrator.cssinjector import CSSInjector
 
 
-def main():
+def parse_args():
     parser = argparse.ArgumentParser(
         prog="CSSINJ.py",
         description="A tool for exfiltrating sensitive information using CSS injection, designed for penetration testing and web application security assessment.",
         epilog="A tool by \33[0;36mAsako\033[0m",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
-        "-H", "--hostname", required=True, help="Attacker hostname or IP address"
+        "-H",
+        "--hostname",
+        required=True,
+        help="Attacker hostname or IP address",
+        default="127.0.0.1",
     )
     parser.add_argument(
-        "-p", "--port", required=True, type=int, help="Port number of attacker"
+        "-p",
+        "--port",
+        required=True,
+        type=int,
+        help="Port number of attacker",
+        default="5005",
     )
     parser.add_argument(
         "-e",
@@ -46,14 +56,20 @@ def main():
     parser.add_argument(
         "-o",
         "--output",
-        default="output",
+        default="output.json",
         help="File to store the exfiltrated data in JSON format",
     )
-    args = parser.parse_args()
+    return parser.parse_args()
 
+
+def main():
+    args = parse_args()
     print(
         "\33[1m  _____   _____   _____  _____  _   _       _     _____  __     __\n / ____| / ____| / ____||_   _|| \\ | |     | |   |  __ \\ \\ \\   / /\n| |     | (___  | (___    | |  |  \\| |     | |   | |__) | \\ \\_/ /\n| |      \\___ \\  \\___ \\   | |  | . ` | _   | |   |  ___/   \\   /\n| |____  ____) | ____) | _| |_ | |\\  || |__| | _ | |        | |\n \\_____||_____/ |_____/ |_____||_| \\_| \\____/ (_)|_|        |_|\033[0m\n"
     )
+
+    if args.method == "font-face":
+        args.attribut = None
 
     CSSInjector().start(args)
 
