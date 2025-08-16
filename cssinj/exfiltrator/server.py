@@ -139,7 +139,7 @@ class Server:
         if self.show_details or self.method == "font-face":
             Console.log(
                 "exfiltration",
-                f"[{client.id}] - Exfiltrating element {len(client.elements)} : {client.data}",
+                f"[{client.id}] - Exfiltrating element: {client.data}",
             )
 
         if self.method == "recursive":
