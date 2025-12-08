@@ -3,18 +3,20 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-dynamic = ["version"]
+version = "0.1.0"
 name = "cssinj"
 description = "A python tools to exploits CSS injection vulnerabilities to exfiltrate sensitive information from web applications."
 readme = { file = "README.md", content-type = "text/markdown" }
-license = { file = "LICENSE" }
-authors = [{ name="Asako" }]
-requires-python = ">=3.8"
+license = { file = "LICENSE", text = "GPL-3.0-only" }
+authors = [{ name="DonAsako" }]
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
     "Operating System :: OS Independent",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
 ]
+keywords = ["CSS", "BugBounty", "Web", "cssinj"]
 dependencies = [
     "aiohttp",
 ]
