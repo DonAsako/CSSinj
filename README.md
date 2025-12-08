@@ -21,17 +21,10 @@
 To install and set up **CSSINJ** from Source, run the following commands:  
 
 ```bash
-git clone https://github.com/DonAsako/CSSinj.git
-cd CSSinj
-python3 -m venv venv  
-source venv/bin/activate
-python3 -m pip install --upgrade pip
-python3 -m pip install --upgrade build
-python3 -m build
-python3 -m pip install .
+pip install cssinj
 ```
 
-Now you’re ready to use **CSSINJ**! 🎯  
+Now you’re ready to use **CSSINJ**! 
 
 ## Usage  
 
