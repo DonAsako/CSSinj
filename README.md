@@ -18,7 +18,7 @@
 
 ## Installation  
 
-To install and set up **CSSINJ** from Source, run the following commands:  
+To install **CSSINJ**, run the following command:  
 
 ```bash
 pip install cssinj
