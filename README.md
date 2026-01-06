@@ -24,7 +24,7 @@ To install **CSSINJ**, run the following command:
 pip install cssinj
 ```
 
-Now you’re ready to use **CSSINJ**! 
+Now you’re ready to use **CSSINJ**!
 
 ## Usage  
 
@@ -62,10 +62,10 @@ python3 -m cssinj [-h] -H HOSTNAME -p PORT [-e ELEMENT] [-a ATTRIBUT] [-d] [-m {
 ```
 
 #### Recursive attack
-###### Using a specific HTML identifier : 
+###### Using a specific HTML identifier :
 
 ```bash
-~ python3 CSSINJ.py inject -H 127.0.0.1 -p 5005 -e input
+~ python3 -m cssinj inject -H 127.0.0.1 -p 5005 -e input
   _____   _____   _____  _____  _   _       _     _____  __     __
  / ____| / ____| / ____||_   _|| \ | |     | |   |  __ \ \ \   / /
 | |     | (___  | (___    | |  |  \| |     | |   | |__) | \ \_/ /
@@ -84,7 +84,7 @@ python3 -m cssinj [-h] -H HOSTNAME -p PORT [-e ELEMENT] [-a ATTRIBUT] [-d] [-m {
 ###### Using a specific CSS attribute selector and a generic HTML identifier:
 
 ```bash
-~ python3 CSSINJ.py -H 127.0.0.1 -p 5005 -e * -a src
+~ python3 -m cssinj -H 127.0.0.1 -p 5005 -e * -a src
   _____   _____   _____  _____  _   _       _     _____  __     __
  / ____| / ____| / ____||_   _|| \ | |     | |   |  __ \ \ \   / /
 | |     | (___  | (___    | |  |  \| |     | |   | |__) | \ \_/ /
@@ -139,15 +139,15 @@ The success of CSS injection attacks using @import depends on the browser's hand
 This difference in behavior makes Chromium-based browsers more susceptible to CSS injection exfiltration, while Firefox provides better protection against such attacks.
 
 ## Todo
-- General : 
+- General :
   - [ ] Add error Handler
     - [ ] File error Handler
   - [ ] Add test
   - [ ] Edit Terminal
 
-- Injection : 
+- Injection :
   - [x] Add injection parameters
-  - [ ] Add an option to save results to a file
+  - [x] Add an option to save results to a file
   - [ ] Allow multiple CSS selectors for simultaneous extraction
   - [ ] Add g all of the page
   - [x] Refract cssinjector.py
