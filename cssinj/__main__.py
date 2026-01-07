@@ -1,13 +1,26 @@
 #!/usr/bin/env python3
-import sys
 import argparse
+import sys
+
 from cssinj.exfiltrator.cssinjector import CSSInjector
+
+BANNER = """
+\33[1m  _____   _____   _____  _____  _   _       _     _____  __     __
+ / ____| / ____| / ____||_   _|| \\ | |     | |   |  __ \\ \\ \\   / /
+| |     | (___  | (___    | |  |  \\| |     | |   | |__) | \\ \\_/ /
+| |      \\___ \\  \\___ \\   | |  | . ` | _   | |   |  ___/   \\   /
+| |____  ____) | ____) | _| |_ | |\\  || |__| | _ | |        | |
+ \\_____||_____/ |_____/ |_____||_| \\_| \\____/ (_)|_|        |_|\033[0m
+"""
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
         prog="CSSINJ.py",
-        description="A tool for exfiltrating sensitive information using CSS injection, designed for penetration testing and web application security assessment.",
+        description=(
+            "A tool for exfiltrating sensitive information using CSS injection, "
+            "designed for penetration testing and web application security assessment.",
+        ),
         epilog="A tool by \33[0;36mAsako\033[0m",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
@@ -50,7 +63,7 @@ def parse_args():
         "-m",
         "--method",
         default="recursive",
-        choices=["recusive", "font-face"],
+        choices=["recursive", "font-face"],
         help="Specify the type of exfiltration",
     )
     parser.add_argument(
@@ -65,9 +78,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    print(
-        "\33[1m  _____   _____   _____  _____  _   _       _     _____  __     __\n / ____| / ____| / ____||_   _|| \\ | |     | |   |  __ \\ \\ \\   / /\n| |     | (___  | (___    | |  |  \\| |     | |   | |__) | \\ \\_/ /\n| |      \\___ \\  \\___ \\   | |  | . ` | _   | |   |  ___/   \\   /\n| |____  ____) | ____) | _| |_ | |\\  || |__| | _ | |        | |\n \\_____||_____/ |_____/ |_____||_| \\_| \\____/ (_)|_|        |_|\033[0m\n"
-    )
+    print(BANNER)
 
     CSSInjector().start(args)
 
