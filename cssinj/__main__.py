@@ -3,6 +3,7 @@ import argparse
 import sys
 
 from cssinj.exfiltrator.cssinjector import CSSInjector
+from cssinj.strategies import list_strategies
 
 BANNER = """
 \33[1m  _____   _____   _____  _____  _   _       _     _____  __     __
@@ -19,9 +20,9 @@ def parse_args():
         prog="CSSINJ.py",
         description=(
             "A tool for exfiltrating sensitive information using CSS injection, "
-            "designed for penetration testing and web application security assessment.",
+            "designed for penetration testing and web application security assessment."
         ),
-        epilog="A tool by \33[0;36mAsako\033[0m",
+        epilog="A tool by \33[0;36mDonAsako\033[0m",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
@@ -63,7 +64,7 @@ def parse_args():
         "-m",
         "--method",
         default="recursive",
-        choices=["recursive", "font-face"],
+        choices=list_strategies(),
         help="Specify the type of exfiltration",
     )
     parser.add_argument(
@@ -72,18 +73,6 @@ def parse_args():
         nargs="?",
         const="output.json",
         help="File to store the exfiltrated data in JSON format",
-    )
-    parser.add_argument(
-        "-c",
-        "--complete",
-        action="store_true",
-        help="Perform a complete exfiltration of the DOM objects",
-    )
-    parser.add_argument(
-        "-s",
-        "--structure",
-        action="store_true",
-        help="Perform an exfiltration of the structure of the HTML",
     )
     return parser.parse_args()
 
