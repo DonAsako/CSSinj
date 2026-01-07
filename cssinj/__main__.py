@@ -73,6 +73,18 @@ def parse_args():
         const="output.json",
         help="File to store the exfiltrated data in JSON format",
     )
+    parser.add_argument(
+        "-c",
+        "--complete",
+        action="store_true",
+        help="Perform a complete exfiltration of the DOM objects",
+    )
+    parser.add_argument(
+        "-s",
+        "--structure",
+        action="store_true",
+        help="Perform an exfiltration of the structure of the HTML",
+    )
     return parser.parse_args()
 
 
