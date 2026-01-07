@@ -153,6 +153,12 @@ This difference in behavior makes Chromium-based browsers more susceptible to CS
   - [x] Refract cssinjector.py
   - [ ] Add timeout
 
+- Complete Exfiltration (Blind):
+  - [x] 0. Complete dom objects
+  - [ ] 1. Get Structure of the HTML (Tags)
+  - [ ] 2. Get all Attributs for each Element
+  - [ ] 3. Get all value for each Attributs
+  - [ ] 4. Get text using font-face exfiltration
 
 ## Disclaimer  
 
@@ -160,4 +166,4 @@ This tool is intended **only for ethical hacking and security research**. **Unau
 
 ## Author  
 
-**CSSINJ** was developed by **Asako**.
+**CSSINJ** was developed by **DonAsako**.
