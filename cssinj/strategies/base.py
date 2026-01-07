@@ -6,9 +6,10 @@ class BaseExfiltrationStrategy(ABC):
 
     name: str = "base"
 
-    def __init__(self, hostname: str, port: int):
+    def __init__(self, hostname: str, port: int, timeout: float = 3.0):
         self.hostname = hostname
         self.port = port
+        self.timeout = timeout
 
     @abstractmethod
     def generate_start_payload(self, client) -> str:

@@ -1,6 +1,6 @@
 import dataclasses
+import time
 from typing import Optional
-from collections.abc import MutableSequence
 
 
 @dataclasses.dataclass
@@ -24,6 +24,7 @@ class Element:
     attributs: list = dataclasses.field(default_factory=list)
     children: list = dataclasses.field(default_factory=list)
     _id_counter: int = dataclasses.field(default=0, init=False, repr=False)
+    last_seen: float = dataclasses.field(default=time.time(), init=False)
 
     def __post_init__(self):
         self.__class__._id_counter += 1

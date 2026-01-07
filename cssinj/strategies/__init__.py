@@ -1,9 +1,11 @@
+from .complete import CompleteStrategy
 from .fontface import FontFaceStrategy
 from .recursive import RecursiveStrategy
 
 STRATEGIES = {
     "recursive": RecursiveStrategy,
     "font-face": FontFaceStrategy,
+    "complete": CompleteStrategy,
 }
 
 

@@ -12,8 +12,8 @@ class RecursiveStrategy(BaseExfiltrationStrategy):
 
     name = "recursive"
 
-    def __init__(self, hostname: str, port: int, element: str = "input", attribut: str = "value") -> None:
-        super().__init__(hostname, port)
+    def __init__(self, hostname: str, port: int, element: str = "input", attribut: str = "value", timeout: float = 3.0) -> None:
+        super().__init__(hostname, port, timeout)
         self.element = element
         self.attribut = attribut
 
@@ -52,6 +52,8 @@ class RecursiveStrategy(BaseExfiltrationStrategy):
         return stri
 
     def handle_valid(self, client, data: str) -> str:
+        # Replace data (recursive gets the full accumulated value each time)
+        client.data = data
         return "valid"
 
     def handle_end(self, client) -> None:

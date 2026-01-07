@@ -146,12 +146,7 @@ This difference in behavior makes Chromium-based browsers more susceptible to CS
   - [ ] Edit Terminal
 
 - Injection :
-  - [x] Add injection parameters
-  - [x] Add an option to save results to a file
-  - [ ] Allow multiple CSS selectors for simultaneous extraction
-  - [ ] Add g all of the page
-  - [x] Refract cssinjector.py
-  - [ ] Add timeout
+  - [x] Add timeout for font-face exfiltration
 
 - Complete Exfiltration (Blind):
   - [x] 0. Complete dom objects

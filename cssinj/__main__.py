@@ -74,6 +74,13 @@ def parse_args():
         const="output.json",
         help="File to store the exfiltrated data in JSON format",
     )
+    parser.add_argument(
+        "-t",
+        "--timeout",
+        type=float,
+        default=3.0,
+        help="Timeout in seconds before considering exfiltration complete (useful for font-face)",
+    )
     return parser.parse_args()
 
 

