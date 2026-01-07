@@ -1,65 +1,103 @@
-name: Publish Python 🐍 distribution 📦 to PyPI and TestPyPI
+name: Release & Publish 🚀
 
 on:
   push:
     branches:
       - main
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
+  release:
+    name: Semantic Release 📦
+    runs-on: ubuntu-latest
+    concurrency: release
+    outputs:
+      released: ${{ steps.release.outputs.released }}
+      version: ${{ steps.release.outputs.version }}
+      tag: ${{ steps.release.outputs.tag }}
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Python Semantic Release
+      id: release
+      uses: python-semantic-release/python-semantic-release@v9.21.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
   build:
     name: Build distribution 📦
+    needs: release
+    if: needs.release.outputs.released == 'true'
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v6
-
-    - uses: actions/setup-python@v6
+    - uses: actions/checkout@v4
       with:
-        python-version: "3.10"
+        ref: ${{ needs.release.outputs.tag }}
+        fetch-depth: 0
 
-    - name: Install pypa/build
-      run: pip install build
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install build dependencies
+      run: pip install build setuptools-scm
 
     - name: Build a binary wheel and a source tarball
       run: python -m build
 
-    - uses: actions/upload-artifact@v5
+    - uses: actions/upload-artifact@v4
       with:
         name: python-package-distributions
         path: dist/
 
   publish-to-pypi:
-    name: Publish Python 🐍 distribution 📦 to PyPI
-    if: startsWith(github.ref, 'refs/tags/')
-    needs: build
+    name: Publish to PyPI 🐍
+    needs: [release, build]
+    if: needs.release.outputs.released == 'true'
     runs-on: ubuntu-latest
     environment:
       name: pypi
       url: https://pypi.org/p/cssinj
     permissions:
       id-token: write
+
     steps:
-    - uses: actions/download-artifact@v6
+    - uses: actions/download-artifact@v4
       with:
         name: python-package-distributions
         path: dist/
+
     - uses: pypa/gh-action-pypi-publish@release/v1
 
-  publish-to-testpypi:
-    name: Publish Python 🐍 distribution 📦 to TestPyPI
-    if: github.ref == 'refs/heads/main'
-    needs: build
+  github-release:
+    name: GitHub Release 🏷️
+    needs: [release, build]
+    if: needs.release.outputs.released == 'true'
     runs-on: ubuntu-latest
-    environment:
-      name: testpypi
-      url: https://test.pypi.org/p/cssinj
     permissions:
-      id-token: write
+      contents: write
+
     steps:
-    - uses: actions/download-artifact@v6
+    - uses: actions/download-artifact@v4
       with:
         name: python-package-distributions
         path: dist/
-    - uses: pypa/gh-action-pypi-publish@release/v1
+
+    - name: Upload to GitHub Release
+      uses: softprops/action-gh-release@v2
       with:
-        repository-url: https://test.pypi.org/legacy/
+        tag_name: ${{ needs.release.outputs.tag }}
+        files: dist/*
+        generate_release_notes: true

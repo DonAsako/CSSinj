@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -24,3 +24,20 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/DonAsako/CSSinj"
 Issues = "https://github.com/DonAsako/CSSinj/issues"
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+version_variables = ["cssinj/__init__.py:__version__"]
+tag_format = "v{version}"
+branch = "main"
+upload_to_pypi = false
+build_command = "pip install build && python -m build"
+commit_message = "chore(release): {version} [skip ci]"
+
+[tool.semantic_release.changelog]
+changelog_file = "CHANGELOG.md"
+
+[tool.semantic_release.commit_parser_options]
+allowed_tags = ["build", "chore", "ci", "docs", "feat", "fix", "perf", "refactor", "style", "test"]
+minor_tags = ["feat"]
+patch_tags = ["fix", "perf"]
