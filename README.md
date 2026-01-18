@@ -43,6 +43,7 @@ python3 -m cssinj [-h] -H HOSTNAME -p PORT [-e ELEMENT] [-a ATTRIBUT] [-d] [-m {
 | `-a, --attribut`       | Specify an element Attribute Selector for exfiltration     |
 | `-d, --details`        | Show detailed logs of the exfiltration process, including extracted data |
 | `-m, --method`        | Specify the type of exfiltration (recursive or font-face) |
+| `-t, --timeout`        | Timeout in seconds before considering exfiltration complete (default: 3.0) |
 | `-o, --output`        | File to store the exfiltrated data in JSON format |
 
 ### Example  
