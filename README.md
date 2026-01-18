@@ -43,6 +43,7 @@ python3 -m cssinj [-h] -H HOSTNAME -p PORT [-e ELEMENT] [-a ATTRIBUT] [-d] [-m {
 | `-a, --attribut`       | Specify an element Attribute Selector for exfiltration     |
 | `-d, --details`        | Show detailed logs of the exfiltration process, including extracted data |
 | `-m, --method`        | Specify the type of exfiltration (recursive or font-face) |
+| `-t, --timeout`        | Timeout in seconds before considering exfiltration complete (default: 3.0) |
 | `-o, --output`        | File to store the exfiltrated data in JSON format |
 
 ### Example  
@@ -146,13 +147,14 @@ This difference in behavior makes Chromium-based browsers more susceptible to CS
   - [ ] Edit Terminal
 
 - Injection :
-  - [x] Add injection parameters
-  - [x] Add an option to save results to a file
-  - [ ] Allow multiple CSS selectors for simultaneous extraction
-  - [ ] Add g all of the page
-  - [x] Refract cssinjector.py
-  - [ ] Add timeout
+  - [x] Add timeout for font-face exfiltration
 
+- Complete Exfiltration (Blind):
+  - [x] 0. Complete dom objects
+  - [ ] 1. Get Structure of the HTML (Tags)
+  - [ ] 2. Get all Attributs for each Element
+  - [ ] 3. Get all value for each Attributs
+  - [ ] 4. Get text using font-face exfiltration
 
 ## Disclaimer  
 
@@ -160,4 +162,4 @@ This tool is intended **only for ethical hacking and security research**. **Unau
 
 ## Author  
 
-**CSSINJ** was developed by **Asako**.
+**CSSINJ** was developed by **DonAsako**.
