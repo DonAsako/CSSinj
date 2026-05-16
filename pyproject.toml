@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-version = "0.2.0"
+version = "0.2.1"
 name = "cssinj"
 description = "A python tools to exploits CSS injection vulnerabilities to exfiltrate sensitive information from web applications."
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -27,6 +27,7 @@ cssinj = "cssinj.__main__:main"
 [project.urls]
 Homepage = "https://github.com/DonAsako/CSSinj"
 Issues = "https://github.com/DonAsako/CSSinj/issues"
+
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]

@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.2.1 (2026-05-16)
+
+### Bug Fixes
+
+- Contributing
+  ([`45e182d`](https://github.com/DonAsako/CSSinj/commit/45e182d967cb89230ed39b4df121861ea1da128b))
+
+
 ## v0.2.0 (2026-01-18)
 
 ### Chores
