@@ -15,4 +15,4 @@ Starring the repository is appreciated!
 
 ## Code of Conduct
 
-Please see our [Code of Conduct](.github/CODE_OF_CONDUCT.md) for guidelines on participating in the Eskoz community. By contributing, you agree to follow these rules to help maintain a welcoming and productive environment.
+Please see our [Code of Conduct](.github/CODE_OF_CONDUCT.md) for guidelines on participating in the CSSInj community. By contributing, you agree to follow these rules to help maintain a welcoming and productive environment.
