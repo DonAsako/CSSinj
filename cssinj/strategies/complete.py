@@ -23,7 +23,7 @@ class CompleteStrategy(BaseExfiltrationStrategy):
         self.attribut = attribut
 
     def generate_start_payload(self, client) -> str:
-        print(self._generate_payload(client))
+        return self._generate_payload(client)
 
     def generate_next_payload(self, client) -> str:
         return "next"

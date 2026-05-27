@@ -1,88 +1,119 @@
-name: Release & Publish 🚀
+name: CI & Release
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: write
   id-token: write
 
 jobs:
-  release:
-    name: Semantic Release 📦
+  # ── Run tests and linters on every push / PR ─────────────────────────────
+  ci:
+    name: Tests & Lint
     runs-on: ubuntu-latest
-    concurrency: release
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Type-check
+        run: uv run mypy
+
+      - name: Tests
+        run: uv run pytest --cov --cov-report=term-missing
+
+  # ── Semantic release (main branch only, after CI passes) ─────────────────
+  release:
+    name: Semantic Release
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: release
+      cancel-in-progress: false
+
     outputs:
       released: ${{ steps.release.outputs.released }}
       version: ${{ steps.release.outputs.version }}
       tag: ${{ steps.release.outputs.tag }}
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-    - uses: actions/setup-python@v5
-      with:
-        python-version: "3.12"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
 
-    - name: Python Semantic Release
-      id: release
-      uses: python-semantic-release/python-semantic-release@v9.21.0
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Python Semantic Release
+        id: release
+        uses: python-semantic-release/python-semantic-release@v9.21.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
+  # ── Build the distribution from the released tag ─────────────────────────
   build:
-    name: Build distribution 📦
+    name: Build distribution
     needs: release
     if: needs.release.outputs.released == 'true'
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ needs.release.outputs.tag }}
-        fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release.outputs.tag }}
+          fetch-depth: 0
 
-    - uses: actions/setup-python@v5
-      with:
-        python-version: "3.12"
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
 
-    - name: Install build dependencies
-      run: pip install build setuptools-scm
+      - name: Build wheel and sdist
+        run: uv build
 
-    - name: Build a binary wheel and a source tarball
-      run: python -m build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
 
-    - uses: actions/upload-artifact@v4
-      with:
-        name: python-package-distributions
-        path: dist/
-
+  # ── Publish to PyPI via trusted publishing ────────────────────────────────
   publish-to-pypi:
-    name: Publish to PyPI 🐍
+    name: Publish to PyPI
     needs: [release, build]
     if: needs.release.outputs.released == 'true'
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/cssinj
+      url: https://pypi.org/p/cssinj/
     permissions:
       id-token: write
 
     steps:
-    - uses: actions/download-artifact@v4
-      with:
-        name: python-package-distributions
-        path: dist/
+      - uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
 
-    - uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: pypa/gh-action-pypi-publish@release/v1
 
+  # ── Attach dist files to the GitHub release ──────────────────────────────
   github-release:
-    name: GitHub Release 🏷️
+    name: GitHub Release
     needs: [release, build]
     if: needs.release.outputs.released == 'true'
     runs-on: ubuntu-latest
@@ -90,14 +121,13 @@ jobs:
       contents: write
 
     steps:
-    - uses: actions/download-artifact@v4
-      with:
-        name: python-package-distributions
-        path: dist/
+      - uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
 
-    - name: Upload to GitHub Release
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: ${{ needs.release.outputs.tag }}
-        files: dist/*
-        generate_release_notes: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.release.outputs.tag }}
+          files: dist/*
+          generate_release_notes: true
