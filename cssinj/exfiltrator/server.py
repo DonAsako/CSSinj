@@ -24,7 +24,6 @@ class Server:
     ) -> None:
         self.hostname: str = args.hostname
         self.port: int = args.port
-        self.show_details: bool = args.details
         self.clients = clients
         self.output_file = output_file
         self.strategy = build_strategy(args)
@@ -76,11 +75,9 @@ class Server:
             self.output_file.update()
         Console.log(LogLevel.CONNECTION, f'Connection from {client.host}')
         Console.log(LogLevel.CONNECTION_DETAILS, f'ID : {client.id}')
+        for key, value in request.headers.items():
+            Console.log(LogLevel.CONNECTION_DETAILS, f'{key} : {value}')
         client.event.set()
-
-        if self.show_details:
-            for key, value in request.headers.items():
-                Console.log(LogLevel.CONNECTION_DETAILS, f'{key} : {value}')
 
         return web.Response(
             text=self.strategy.generate_start_payload(client),
@@ -116,12 +113,11 @@ class Server:
 
         if self.output_file is not None:
             self.output_file.update()
-        if self.show_details:
-            Console.log(LogLevel.EXFILTRATION, f'[{client.id}] - Exfiltrating element: {data}')
+        Console.log(LogLevel.EXFILTRATION, f'[{client.id}] - Exfiltrating element: {data}')
 
         return web.Response(text=body, content_type=CSS_CONTENT_TYPE)
 
-    @web.middleware
+    @web.middleware  # type: ignore[misc, unused-ignore]
     async def error_middleware(self, request: web.Request, handler: Handler) -> web.StreamResponse:
         try:
             return await handler(request)

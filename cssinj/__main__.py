@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
 import argparse
 import sys
+from pathlib import Path
 
 from cssinj.console import setup_logging
 from cssinj.exfiltrator.cssinjector import CSSInjector
@@ -60,6 +60,30 @@ def parse_args() -> argparse.Namespace:
         action='store_true',
         help='Show detailed logs of the exfiltration process, including extracted data.',
     )
+    verbosity = parser.add_mutually_exclusive_group()
+    verbosity.add_argument(
+        '-v',
+        '--verbose',
+        action='store_true',
+        help='Enable debug-level logging.',
+    )
+    verbosity.add_argument(
+        '-q',
+        '--quiet',
+        action='store_true',
+        help='Only log warnings and errors.',
+    )
+    parser.add_argument(
+        '--no-banner',
+        action='store_true',
+        help='Do not print the ASCII banner on startup.',
+    )
+    parser.add_argument(
+        '--log-file',
+        type=Path,
+        default=None,
+        help='Also write structured logs to this file.',
+    )
     parser.add_argument(
         '-m',
         '--method',
@@ -86,8 +110,13 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    sys.stdout.write(BANNER + '\n')
-    setup_logging(verbose=args.details)
+    if not args.no_banner:
+        sys.stdout.write(BANNER + '\n')
+    setup_logging(
+        quiet=args.quiet,
+        verbose=args.verbose or args.details,
+        log_file=args.log_file,
+    )
     CSSInjector().start(args)
 
 
