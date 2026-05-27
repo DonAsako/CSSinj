@@ -1,0 +1,137 @@
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "python.languageServer": "Default",
+    "python.analysis.typeCheckingMode": "standard",
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.autoSearchPaths": true,
+    "python.analysis.diagnosticMode": "openFilesOnly",
+    "python.analysis.indexing": true,
+    "python.analysis.inlayHints.functionReturnTypes": true,
+    "python.analysis.inlayHints.variableTypes": false,
+    "python.analysis.inlayHints.pytestParameters": true,
+    "mypy-type-checker.interpreter": [
+        "${workspaceFolder}/.venv/bin/python"
+    ],
+    "mypy-type-checker.importStrategy": "fromEnvironment",
+    "mypy-type-checker.preferDaemon": true,
+    "mypy-type-checker.reportingScope": "workspace",
+    "mypy-type-checker.args": [
+        "--config-file=${workspaceFolder}/pyproject.toml"
+    ],
+    "ruff.interpreter": [
+        "${workspaceFolder}/.venv/bin/python"
+    ],
+    "ruff.importStrategy": "fromEnvironment",
+    "ruff.nativeServer": "on",
+    "ruff.format.backend": "uv",
+    "ruff.configurationPreference": "filesystemFirst",
+    "ruff.fixAll": true,
+    "ruff.organizeImports": true,
+    "ruff.showSyntaxErrors": true,
+    "ruff.logLevel": "info",
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": false,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": "explicit",
+            "source.organizeImports.ruff": "explicit"
+        },
+        "editor.rulers": [
+            120
+        ],
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true,
+        "editor.wordBasedSuggestions": "off"
+    },
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        "tests",
+        "--cov=ctfless",
+        "--cov-report=term-missing",
+        "--no-cov-on-fail"
+    ],
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
+    "yaml.format.enable": true,
+    "yaml.validate": true,
+    "[yaml]": {
+        "editor.defaultFormatter": "redhat.vscode-yaml",
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true
+    },
+    "[markdown]": {
+        "editor.formatOnSave": false,
+        "editor.wordWrap": "on",
+        "editor.quickSuggestions": {
+            "comments": "off",
+            "strings": "off",
+            "other": "off"
+        }
+    },
+    "[toml]": {
+        "editor.defaultFormatter": "tamasfe.even-better-toml",
+        "editor.formatOnSave": true
+    },
+    "evenBetterToml.formatter.alignEntries": true,
+    "evenBetterToml.formatter.reorderKeys": false,
+    "evenBetterToml.schema.enabled": true,
+    "[json][jsonc]": {
+        "editor.tabSize": 2,
+        "editor.formatOnSave": true
+    },
+    "editor.formatOnSave": true,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": "active",
+    "editor.stickyScroll.enabled": true,
+    "editor.inlineSuggest.enabled": true,
+    "editor.suggestSelection": "first",
+    "editor.renderWhitespace": "boundary",
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.eol": "\n",
+    "files.associations": {
+        ".gitlint": "ini",
+        ".yamllint": "yaml",
+        ".python-version": "plaintext"
+    },
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.pytest_cache": true,
+        "**/.ruff_cache": true,
+        "**/.mypy_cache": true,
+        "**/.benchmarks": true,
+        "**/.coverage": true,
+        "**/.coverage.*": true,
+        "**/htmlcov": true,
+        "**/*.egg-info": true,
+        "**/.tox": true
+    },
+    "files.watcherExclude": {
+        "**/.venv/**": true,
+        "**/.git/objects/**": true,
+        "**/__pycache__/**": true,
+        "**/.ruff_cache/**": true,
+        "**/.mypy_cache/**": true,
+        "**/.pytest_cache/**": true,
+        "**/.benchmarks/**": true,
+        "**/htmlcov/**": true
+    },
+    "search.exclude": {
+        "**/.venv": true,
+        "**/.ruff_cache": true,
+        "**/.mypy_cache": true,
+        "**/.pytest_cache": true,
+        "**/.benchmarks": true,
+        "**/__pycache__": true,
+        "**/htmlcov": true,
+        "**/uv.lock": true,
+        "**/dist": true,
+        "**/build": true
+    },
+    "search.useIgnoreFiles": true
+}

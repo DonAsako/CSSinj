@@ -1,71 +1,83 @@
 import asyncio
 import dataclasses
-from collections.abc import MutableSequence
+import itertools
+from collections.abc import Iterable, Iterator, MutableSequence
+from typing import Self, overload
+
+from cssinj.utils.dom import Element
 
 
 @dataclasses.dataclass
 class Client:
-    id: int = dataclasses.field(default=0, init=False)
     host: str
-    headers: dict
-    accept: str
-    status: bool = dataclasses.field(default=True, init=False)
-    counter: int = dataclasses.field(default=0, init=False)
+    headers: dict[str, str]
+    accept: str | None
     event: asyncio.Event
-    elements: list = dataclasses.field(default_factory=list)
-    data: str = dataclasses.field(default_factory=str, init=False)
-    _id_counter: int = dataclasses.field(default=0, init=False, repr=False)
-
-    def __post_init__(self):
-        self.__class__._id_counter += 1
-        self.id = self.__class__._id_counter
+    id: int = dataclasses.field(default=0)
+    status: bool = dataclasses.field(default=True)
+    counter: int = dataclasses.field(default=0)
+    elements: list[Element] = dataclasses.field(default_factory=list)
+    data: str = dataclasses.field(default='')
 
 
-class Clients(MutableSequence):
-    def __init__(self):
-        super().__init__()
-        self.client_list = []
+class Clients(MutableSequence[Client]):
+    def __init__(self) -> None:
+        self._items: list[Client] = []
+        self._id_counter: Iterator[int] = itertools.count(1)
 
-    def __repr__(self):
-        return f"<{self.__class__.__name__} clients: {repr(self.client_list)}>"
+    def __repr__(self) -> str:
+        return f'<{type(self).__name__} clients: {self._items!r}>'
 
-    def __contains__(self, value):
-        return value in self.client_list
+    def __len__(self) -> int:
+        return len(self._items)
 
-    def __len__(self):
-        return len(self.client_list)
+    def __iter__(self) -> Iterator[Client]:
+        return iter(self._items)
 
-    def __getitem__(self, id):
-        client = self.get_client_by_id(id)
+    def __contains__(self, value: object) -> bool:
+        return value in self._items
+
+    @overload
+    def __getitem__(self, index: int) -> Client: ...
+    @overload
+    def __getitem__(self, index: slice) -> list[Client]: ...
+    def __getitem__(self, index: int | slice) -> Client | list[Client]:
+        return self._items[index]
+
+    @overload
+    def __setitem__(self, index: int, value: Client) -> None: ...
+    @overload
+    def __setitem__(self, index: slice, value: Iterable[Client]) -> None: ...
+    def __setitem__(self, index, value) -> None:  # type: ignore[no-untyped-def]
+        self._items[index] = value
+
+    def __delitem__(self, index: int | slice) -> None:
+        del self._items[index]
+
+    def insert(self, index: int, value: Client) -> None:
+        self._items.insert(index, value)
+
+    def __add__(self, other: object) -> Self:
+        if not isinstance(other, Clients):
+            return NotImplemented
+        merged = type(self)()
+        merged._items = self._items + other._items
+        return merged
+
+    def register(self, client: Client) -> Client:
+        """Assign a unique id and append the client."""
+        client.id = next(self._id_counter)
+        self._items.append(client)
         return client
 
-    def __delitem__(self, id):
-        item = self.get_client_by_id(id)
-        self.client_list.remove(item)
-        return item
-
-    def __setitem__(self, i, client):
-        self.client_list.append(client)
-
-    def __iter__(self):
-        return iter(self.client_list)
-
-    def append(self, client):
-        self.client_list.append(client)
-
-    def insert(self, id, new_client):
-        for i in range(len(self.client_list)):
-            if self.client_list[i].id == id:
-                self.client_list[i] = new_client
-
-    def __add__(self, another_clients):
-        if isinstance(another_clients, Clients):
-            return self.__class__(self.client_list + another_clients)
-
-    def get_client_by_id(self, id):
-        for client in self.client_list:
-            if client.id == int(id):
+    def get_by_id(self, client_id: int | str | None) -> Client | None:
+        if client_id is None:
+            return None
+        try:
+            target = int(client_id)
+        except (TypeError, ValueError):
+            return None
+        for client in self._items:
+            if client.id == target:
                 return client
-
-    def clear(self):
-        self.client_list.clear()
+        return None

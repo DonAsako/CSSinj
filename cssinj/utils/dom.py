@@ -1,35 +1,30 @@
+from __future__ import annotations
+
 import dataclasses
+import itertools
 import time
-from typing import Optional
+from collections.abc import Iterator
+
+_attribute_ids: Iterator[int] = itertools.count(1)
+_element_ids: Iterator[int] = itertools.count(1)
 
 
 @dataclasses.dataclass
-class Attribut:
-    id: int = dataclasses.field(default=0, init=False)
+class Attribute:
     name: str
     value: str
-
-    _id_counter: int = dataclasses.field(default=0, init=False, repr=False)
-
-    def __post_init__(self):
-        self.__class__._id_counter += 1
-        self.id = self.__class__._id_counter
+    id: int = dataclasses.field(default_factory=lambda: next(_attribute_ids))
 
 
 @dataclasses.dataclass
 class Element:
-    id: int = dataclasses.field(default=0, init=False)
     name: str
-    parent: Optional["Element"] = None
-    attributs: list = dataclasses.field(default_factory=list)
-    children: list = dataclasses.field(default_factory=list)
-    _id_counter: int = dataclasses.field(default=0, init=False, repr=False)
-    last_seen: float = dataclasses.field(default=time.time(), init=False)
+    parent: Element | None = None
+    attributes: list[Attribute] = dataclasses.field(default_factory=list)
+    children: list[Element] = dataclasses.field(default_factory=list)
+    id: int = dataclasses.field(default_factory=lambda: next(_element_ids))
+    last_seen: float = dataclasses.field(default_factory=time.time)
 
-    def __post_init__(self):
-        self.__class__._id_counter += 1
-        self.id = self.__class__._id_counter
-
-        # Add element to children list of his parent
-        if self.parent:
+    def __post_init__(self) -> None:
+        if self.parent is not None:
             self.parent.children.append(self)

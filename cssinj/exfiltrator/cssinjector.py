@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 
 from cssinj.client import Clients
@@ -6,16 +7,16 @@ from cssinj.file import OutputFile
 
 
 class CSSInjector:
-    def __init__(self):
+    def __init__(self) -> None:
         self.clients = Clients()
-        self.output_file = None
+        self.output_file: OutputFile | None = None
+        self.server: Server | None = None
 
-    def start(self, args):
+    def start(self, args: argparse.Namespace) -> None:
         if args.output:
             self.output_file = OutputFile(args.output, self.clients)
-
         self.server = Server(args=args, clients=self.clients, output_file=self.output_file)
-        asyncio.run(self.server.start())
-
-    def stop(self):
-        self.server.stop()
+        try:
+            asyncio.run(self.server.run())
+        except KeyboardInterrupt:
+            pass

