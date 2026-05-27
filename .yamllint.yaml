@@ -1,0 +1,99 @@
+extends: default
+
+yaml-files:
+  - "*.yaml"
+  - "*.yml"
+  - ".yamllint"
+  - ".gitlint"
+
+ignore: |
+  .venv/
+  .git/
+  .tox/
+  .mypy_cache/
+  .ruff_cache/
+  .pytest_cache/
+  .benchmarks/
+  htmlcov/
+  build/
+  dist/
+  node_modules/
+  uv.lock
+  **/*.lock
+
+rules:
+  line-length:
+    max: 120
+    level: warning
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
+
+  indentation:
+    spaces: 2
+    indent-sequences: consistent
+    check-multi-line-strings: false
+
+  trailing-spaces: enable
+  new-line-at-end-of-file: enable
+  empty-lines:
+    max: 2
+    max-start: 0
+    max-end: 0
+
+  document-start:
+    present: false
+  document-end:
+    present: false
+
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+    min-spaces-inside-empty: 0
+    max-spaces-inside-empty: 0
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+    min-spaces-inside-empty: 0
+    max-spaces-inside-empty: 0
+  colons:
+    max-spaces-before: 0
+    max-spaces-after: 1
+  commas:
+    max-spaces-before: 0
+    min-spaces-after: 1
+    max-spaces-after: 1
+  hyphens:
+    max-spaces-after: 1
+
+  comments:
+    require-starting-space: true
+    min-spaces-from-content: 1
+    ignore-shebangs: true
+  comments-indentation: enable
+
+  truthy:
+    allowed-values: ["true", "false"]
+    check-keys: true
+    level: warning
+
+  key-duplicates: enable
+  key-ordering: disable
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: false
+
+  anchors:
+    forbid-undeclared-aliases: true
+    forbid-duplicated-anchors: true
+    forbid-unused-anchors: true
+
+  quoted-strings: disable
+  empty-values:
+    forbid-in-block-mappings: false
+    forbid-in-flow-mappings: true
+
+  float-values:
+    require-numeral-before-decimal: true
+    forbid-scientific-notation: false
+    forbid-nan: true
+    forbid-inf: true
