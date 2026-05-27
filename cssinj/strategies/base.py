@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class BaseExfiltrationStrategy(ABC):
     """Base class for all exfiltration strategies."""
 
-    name: str = "base"
+    name: str = 'base'
 
     def __init__(self, hostname: str, port: int, timeout: float = 3.0):
         self.hostname = hostname
