@@ -19,7 +19,15 @@ class Server:
         self.show_details = args.details
         self.clients = clients
         self.output_file = output_file
-        self.app = web.Application(middlewares=[self.error_middleware, self.dynamic_router_middleware])
+        self.app = web.Application(middlewares=[self.error_middleware])
+        self.app.add_routes(
+            [
+                web.get('/start', self.handle_start),
+                web.get('/n', self.handle_next),
+                web.get('/v', self.handle_valid),
+                web.get('/e', self.handle_end),
+            ],
+        )
 
         # Instantiate the strategy
         StrategyClass = get_strategy(args.method)
@@ -118,22 +126,6 @@ class Server:
             )
 
         return web.Response(text='ok', content_type='text/css')
-
-    async def dynamic_router_middleware(self, app, handler):
-        async def middleware_handler(request):
-            path = request.path
-
-            if path.startswith('/start'):
-                return await self.handle_start(request)
-            if path.startswith('/n'):
-                return await self.handle_next(request)
-            if path.startswith('/v'):
-                return await self.handle_valid(request)
-            if path.startswith('/e'):
-                return await self.handle_end(request)
-            return web.Response(text='404: Not Found', status=404)
-
-        return middleware_handler
 
     @web.middleware
     async def error_middleware(self, request, handler):
