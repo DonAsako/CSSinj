@@ -47,13 +47,14 @@ class Server:
         Console.log(LogLevel.SERVER, "Attacker's server stopped.")
 
     async def handle_start(self, request):
-        client = Client(
-            host=request.remote,
-            accept=request.get("accept"),
-            headers=dict(request.headers),
-            event=asyncio.Event(),
+        client = self.clients.register(
+            Client(
+                host=request.remote,
+                accept=request.get("accept"),
+                headers=dict(request.headers),
+                event=asyncio.Event(),
+            ),
         )
-        self.clients.append(client)
         if self.output_file:
             self.output_file.update()
         Console.log(LogLevel.CONNECTION, f"Connection from {client.host}")
@@ -151,10 +152,7 @@ class Server:
             return web.Response(text="500: Internal Server Error", status=500)
 
     def _get_client(self, request) -> Client:
-        client_id = request.query.get("cid")
-        client = self.clients[client_id]
-
+        client = self.clients.get_by_id(request.query.get("cid"))
         if client is None:
             raise InjectionError("Unknown client id")
-
         return client
