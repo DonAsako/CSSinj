@@ -7,7 +7,6 @@ from aiohttp import web
 from cssinj.client import Client
 from cssinj.console import Console, LogLevel
 from cssinj.strategies import get_strategy
-from cssinj.utils.dom import Attribut, Element
 from cssinj.utils.error import InjectionError
 
 
@@ -81,26 +80,11 @@ class Server:
 
     async def handle_end(self, request):
         client = self._get_client(request)
-
-        element = Element(name=self.element)
-        element.attributs.append(Attribut(name=self.attribut, value=client.data))
-        client.elements.append(element)
+        body = self.strategy.handle_end(client)
         if self.output_file:
             self.output_file.update()
-
         client.event.set()
-
-        Console.log(
-            LogLevel.END_EXFILTRATION,
-            f'[{client.id}] - The {self.attribut} exfiltrated from {self.element} is : {client.data}',
-        )
-
-        client.data = ''
-
-        return web.Response(
-            text=self.strategy.handle_end(client),
-            content_type='text/css',
-        )
+        return web.Response(text=body, content_type='text/css')
 
     async def handle_next(self, request):
         client = self._get_client(request)

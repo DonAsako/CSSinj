@@ -1,5 +1,7 @@
+from cssinj.console import Console, LogLevel
 from cssinj.strategies.base import BaseExfiltrationStrategy
 from cssinj.utils.default import ELEMENTS
+from cssinj.utils.dom import Attribut, Element
 
 
 class CompleteStrategy(BaseExfiltrationStrategy):
@@ -32,6 +34,14 @@ class CompleteStrategy(BaseExfiltrationStrategy):
         return 'valid'
 
     def handle_end(self, client) -> str:
+        element = Element(name=self.element)
+        element.attributs.append(Attribut(name=self.attribut, value=client.data))
+        client.elements.append(element)
+        Console.log(
+            LogLevel.END_EXFILTRATION,
+            f'[{client.id}] - The {self.attribut} exfiltrated from {self.element} is : {client.data}',
+        )
+        client.data = ''
         return 'end'
 
     def _generate_payload(self, client) -> str:

@@ -1,7 +1,9 @@
 import urllib.parse
 
+from cssinj.console import Console, LogLevel
 from cssinj.strategies.base import BaseExfiltrationStrategy
 from cssinj.utils import default
+from cssinj.utils.dom import Attribut, Element
 
 
 class RecursiveStrategy(BaseExfiltrationStrategy):
@@ -60,6 +62,14 @@ class RecursiveStrategy(BaseExfiltrationStrategy):
         return 'valid'
 
     def handle_end(self, client) -> str:
+        element = Element(name=self.element)
+        element.attributs.append(Attribut(name=self.attribut, value=client.data))
+        client.elements.append(element)
+        Console.log(
+            LogLevel.END_EXFILTRATION,
+            f'[{client.id}] - The {self.attribut} exfiltrated from {self.element} is : {client.data}',
+        )
+        client.data = ''
         return 'end'
 
     def _generate_import(self, client) -> str:
