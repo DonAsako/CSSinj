@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import contextlib
 
 from cssinj.client import Clients
 from cssinj.exfiltrator.server import Server
@@ -16,7 +17,5 @@ class CSSInjector:
         if args.output:
             self.output_file = OutputFile(args.output, self.clients)
         self.server = Server(args=args, clients=self.clients, output_file=self.output_file)
-        try:
+        with contextlib.suppress(KeyboardInterrupt):
             asyncio.run(self.server.run())
-        except KeyboardInterrupt:
-            pass

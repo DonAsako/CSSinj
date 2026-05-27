@@ -3,7 +3,10 @@ from __future__ import annotations
 import dataclasses
 import itertools
 import time
-from collections.abc import Iterator
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 _attribute_ids: Iterator[int] = itertools.count(1)
 _element_ids: Iterator[int] = itertools.count(1)
