@@ -2,6 +2,7 @@
 import argparse
 import sys
 
+from cssinj.console import setup_logging
 from cssinj.exfiltrator.cssinjector import CSSInjector
 from cssinj.strategies import list_strategies
 
@@ -47,8 +48,9 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         '-a',
-        '--attribut',
-        required=False,
+        '--attribute',
+        '--attribut',  # deprecated alias
+        dest='attribute',
         default='value',
         help='Specify an element Attribute Selector for exfiltration',
     )
@@ -84,8 +86,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    print(BANNER)
-
+    sys.stdout.write(BANNER + '\n')
+    setup_logging(verbose=args.details)
     CSSInjector().start(args)
 
 

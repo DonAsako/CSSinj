@@ -28,7 +28,7 @@ def build_strategy(args: argparse.Namespace) -> BaseExfiltrationStrategy:
         hostname=args.hostname,
         port=args.port,
         element=args.element,
-        attribut=args.attribut,
+        attribute=args.attribute,
         timeout=args.timeout,
     )
 

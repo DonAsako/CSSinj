@@ -50,7 +50,6 @@ ELEMENTS = [
     'head',
     'header',
     'hgroup',
-    'hgroup',
     'hr',
     'html',
     'i',
@@ -125,7 +124,6 @@ ELEMENTS = [
     'var',
     'video',
     'wbr',
-    'wbr',
     'xmp',
 ]
 ATTRIBUTS = [
@@ -174,7 +172,6 @@ ATTRIBUTS = [
     'itemref',
     'itemscope',
     'itemtype',
-    'itemtype',
     'lang',
     'nonce',
     'part',
@@ -202,9 +199,6 @@ INPUT_TYPES_VALUES = [
     'password',
     'radio',
     'range',
-    'reset',
-    'search',
-    'submit',
     'reset',
     'search',
     'submit',

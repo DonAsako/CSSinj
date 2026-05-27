@@ -12,6 +12,8 @@ from cssinj.file import OutputFile
 from cssinj.strategies import build_strategy
 from cssinj.utils.error import InjectionError
 
+CSS_CONTENT_TYPE = 'text/css'
+
 
 class Server:
     def __init__(
@@ -82,7 +84,7 @@ class Server:
 
         return web.Response(
             text=self.strategy.generate_start_payload(client),
-            content_type='text/css',
+            content_type=CSS_CONTENT_TYPE,
         )
 
     async def handle_end(self, request: web.Request) -> web.Response:
@@ -91,7 +93,7 @@ class Server:
         if self.output_file is not None:
             self.output_file.update()
         client.event.set()
-        return web.Response(text=body, content_type='text/css')
+        return web.Response(text=body, content_type=CSS_CONTENT_TYPE)
 
     async def handle_next(self, request: web.Request) -> web.Response:
         client = self._get_client(request)
@@ -100,7 +102,7 @@ class Server:
         client.event.clear()
         return web.Response(
             text=self.strategy.generate_next_payload(client),
-            content_type='text/css',
+            content_type=CSS_CONTENT_TYPE,
         )
 
     async def handle_valid(self, request: web.Request) -> web.Response:
@@ -110,14 +112,14 @@ class Server:
             raise web.HTTPBadRequest(text='missing t')
 
         client.event.set()
-        self.strategy.handle_valid(client, data)
+        body = self.strategy.handle_valid(client, data)
 
         if self.output_file is not None:
             self.output_file.update()
         if self.show_details:
             Console.log(LogLevel.EXFILTRATION, f'[{client.id}] - Exfiltrating element: {data}')
 
-        return web.Response(text='ok', content_type='text/css')
+        return web.Response(text=body, content_type=CSS_CONTENT_TYPE)
 
     @web.middleware
     async def error_middleware(self, request: web.Request, handler: Handler) -> web.StreamResponse:

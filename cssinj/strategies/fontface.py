@@ -5,7 +5,7 @@ from cssinj.client import Client
 from cssinj.console import Console, LogLevel
 from cssinj.strategies.base import BaseExfiltrationStrategy
 from cssinj.utils import default
-from cssinj.utils.dom import Attribut, Element
+from cssinj.utils.dom import Attribute, Element
 
 
 class FontFaceStrategy(BaseExfiltrationStrategy):
@@ -22,10 +22,10 @@ class FontFaceStrategy(BaseExfiltrationStrategy):
         hostname: str,
         port: int,
         element: str = 'input',
-        attribut: str = 'value',
+        attribute: str = 'value',
         timeout: float = 3.0,
     ) -> None:
-        super().__init__(hostname, port, element, attribut, timeout)
+        super().__init__(hostname, port, element, attribute, timeout)
         self._timeout_tasks: dict[int, asyncio.Task[None]] = {}
         self._ended: set[int] = set()
 
@@ -64,7 +64,7 @@ class FontFaceStrategy(BaseExfiltrationStrategy):
 
         # Create element with the exfiltrated text
         element = Element(name=self.element)
-        element.attributs.append(Attribut(name='textContent', value=client.data))
+        element.attributes.append(Attribute(name='textContent', value=client.data))
         client.elements.append(element)
 
         Console.log(

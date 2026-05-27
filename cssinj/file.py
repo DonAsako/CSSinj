@@ -4,13 +4,13 @@ from pathlib import Path
 from typing import NotRequired, TypedDict
 
 from cssinj.client import Client, Clients
-from cssinj.utils.dom import Attribut, Element
+from cssinj.utils.dom import Attribute, Element
 
 
 class ElementDict(TypedDict):
     id: int
     name: str
-    attributs: NotRequired[dict[str, str]]
+    attributes: NotRequired[dict[str, str]]
 
 
 class ClientDict(TypedDict):
@@ -49,14 +49,14 @@ class OutputFile(File):
         self.clients = clients
 
     @staticmethod
-    def _attributs_to_dict(attributs: list[Attribut]) -> dict[str, str]:
-        return {attribut.name: attribut.value for attribut in attributs}
+    def _attributs_to_dict(attributes: list[Attribute]) -> dict[str, str]:
+        return {attribute.name: attribute.value for attribute in attributes}
 
     @classmethod
     def _element_to_dict(cls, element: Element) -> ElementDict:
         result = ElementDict(id=element.id, name=element.name)
-        if element.attributs:
-            result['attributs'] = cls._attributs_to_dict(element.attributs)
+        if element.attributes:
+            result['attributes'] = cls._attributs_to_dict(element.attributes)
         return result
 
     @classmethod
