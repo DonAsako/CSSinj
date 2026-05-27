@@ -27,6 +27,6 @@ class BaseExfiltrationStrategy(ABC):
         ...
 
     @abstractmethod
-    def handle_end(self, client) -> None:
-        """Called when exfiltration is complete for this client."""
+    def handle_end(self, client) -> str:
+        """Called when exfiltration is complete for this client. Returns the response body."""
         ...
