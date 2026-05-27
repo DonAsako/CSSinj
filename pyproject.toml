@@ -262,7 +262,7 @@ allow-magic-value-types = ["int", "str", "bytes"]
 # ============================================================================
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.13"
 files = ["cssinj", "tests"]
 namespace_packages = true
 pretty = true

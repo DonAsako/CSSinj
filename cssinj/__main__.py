@@ -15,7 +15,7 @@ BANNER = """
 """
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog='CSSINJ.py',
         description=(
@@ -82,7 +82,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
     args = parse_args()
     print(BANNER)
 

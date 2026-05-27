@@ -1,13 +1,26 @@
-from __future__ import annotations
-
 import itertools
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import NotRequired, TypedDict
 
-if TYPE_CHECKING:
-    from cssinj.client import Client, Clients
-    from cssinj.utils.dom import Attribut, Element
+from cssinj.client import Client, Clients
+from cssinj.utils.dom import Attribut, Element
+
+
+class ElementDict(TypedDict):
+    id: int
+    name: str
+    attributs: NotRequired[dict[str, str]]
+
+
+class ClientDict(TypedDict):
+    id: int
+    headers: dict[str, str]
+    elements: list[ElementDict]
+
+
+class OutputPayload(TypedDict):
+    clients: list[ClientDict]
 
 
 class File:
@@ -31,8 +44,6 @@ class File:
 
 
 class OutputFile(File):
-    CLIENT_FIELDS = ('id', 'headers', 'elements')
-
     def __init__(self, file_name: str, clients: Clients) -> None:
         super().__init__(file_name)
         self.clients = clients
@@ -42,14 +53,14 @@ class OutputFile(File):
         return {attribut.name: attribut.value for attribut in attributs}
 
     @classmethod
-    def _element_to_dict(cls, element: Element) -> dict[str, Any]:
-        element_dict: dict[str, Any] = {'id': element.id, 'name': element.name}
+    def _element_to_dict(cls, element: Element) -> ElementDict:
+        result = ElementDict(id=element.id, name=element.name)
         if element.attributs:
-            element_dict['attributs'] = cls._attributs_to_dict(element.attributs)
-        return element_dict
+            result['attributs'] = cls._attributs_to_dict(element.attributs)
+        return result
 
     @classmethod
-    def _client_to_dict(cls, client: Client) -> dict[str, Any]:
+    def _client_to_dict(cls, client: Client) -> ClientDict:
         return {
             'id': client.id,
             'headers': client.headers,
@@ -57,5 +68,5 @@ class OutputFile(File):
         }
 
     def update(self) -> None:
-        payload = {'clients': [self._client_to_dict(c) for c in self.clients]}
+        payload: OutputPayload = {'clients': [self._client_to_dict(c) for c in self.clients]}
         self.write(json.dumps(payload, indent=4))

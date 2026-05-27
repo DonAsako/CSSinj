@@ -1,32 +1,39 @@
 from abc import ABC, abstractmethod
 
+from cssinj.client import Client
+
 
 class BaseExfiltrationStrategy(ABC):
     """Base class for all exfiltration strategies."""
 
     name: str = 'base'
 
-    def __init__(self, hostname: str, port: int, timeout: float = 3.0):
+    def __init__(
+        self,
+        hostname: str,
+        port: int,
+        element: str = 'input',
+        attribut: str = 'value',
+        timeout: float = 3.0,
+    ) -> None:
         self.hostname = hostname
         self.port = port
+        self.element = element
+        self.attribut = attribut
         self.timeout = timeout
 
     @abstractmethod
-    def generate_start_payload(self, client) -> str:
+    def generate_start_payload(self, client: Client) -> str:
         """CSS returned on /start for this client."""
-        ...
 
     @abstractmethod
-    def generate_next_payload(self, client) -> str:
+    def generate_next_payload(self, client: Client) -> str:
         """CSS returned on /n for this client."""
-        ...
 
     @abstractmethod
-    def handle_valid(self, client, data: str) -> str:
+    def handle_valid(self, client: Client, data: str) -> str:
         """Called when /v receives data."""
-        ...
 
     @abstractmethod
-    def handle_end(self, client) -> str:
-        """Called when exfiltration is complete for this client. Returns the response body."""
-        ...
+    def handle_end(self, client: Client) -> str:
+        """Called when exfiltration is complete. Returns the response body."""

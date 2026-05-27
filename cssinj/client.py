@@ -1,10 +1,8 @@
-from __future__ import annotations
-
 import asyncio
 import dataclasses
 import itertools
 from collections.abc import Iterable, Iterator, MutableSequence
-from typing import overload
+from typing import Self, overload
 
 from cssinj.utils.dom import Element
 
@@ -59,10 +57,10 @@ class Clients(MutableSequence[Client]):
     def insert(self, index: int, value: Client) -> None:
         self._items.insert(index, value)
 
-    def __add__(self, other: object) -> Clients:
+    def __add__(self, other: object) -> Self:
         if not isinstance(other, Clients):
-            return NotImplemented  # type: ignore[return-value]
-        merged = Clients()
+            return NotImplemented
+        merged = type(self)()
         merged._items = self._items + other._items
         return merged
 
