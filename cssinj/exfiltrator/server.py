@@ -1,24 +1,34 @@
+from __future__ import annotations
+
+import argparse
 import asyncio
 import contextlib
 import signal
 
 from aiohttp import web
 
-from cssinj.client import Client
+from cssinj.client import Client, Clients
 from cssinj.console import Console, LogLevel
-from cssinj.strategies import get_strategy
+from cssinj.file import OutputFile
+from cssinj.strategies import build_strategy
 from cssinj.utils.error import InjectionError
 
 
 class Server:
-    def __init__(self, clients, args, output_file):
-        self.hostname = args.hostname
-        self.port = args.port
-        self.element = args.element
-        self.attribut = args.attribut
-        self.show_details = args.details
+    def __init__(
+        self,
+        clients: Clients,
+        args: argparse.Namespace,
+        output_file: OutputFile | None,
+    ) -> None:
+        self.hostname: str = args.hostname
+        self.port: int = args.port
+        self.show_details: bool = args.details
         self.clients = clients
         self.output_file = output_file
+        self.strategy = build_strategy(args)
+        self.runner: web.AppRunner | None = None
+
         self.app = web.Application(middlewares=[self.error_middleware])
         self.app.add_routes(
             [
@@ -27,16 +37,6 @@ class Server:
                 web.get('/v', self.handle_valid),
                 web.get('/e', self.handle_end),
             ],
-        )
-
-        # Instantiate the strategy
-        StrategyClass = get_strategy(args.method)
-        self.strategy = StrategyClass(
-            hostname=self.hostname,
-            port=self.port,
-            element=self.element,
-            attribut=self.attribut,
-            timeout=getattr(args, 'timeout', 3.0),
         )
 
     async def run(self) -> None:
@@ -130,10 +130,11 @@ class Server:
     @web.middleware
     async def error_middleware(self, request, handler):
         try:
-            response = await handler(request)
-            return response
+            return await handler(request)
+        except web.HTTPException:
+            raise
         except Exception as ex:
-            Console.error_handler(ex, context={'source': 'middleware'})
+            Console.error_handler(ex, context={'source': 'middleware', 'path': request.path})
             return web.Response(text='500: Internal Server Error', status=500)
 
     def _get_client(self, request) -> Client:
