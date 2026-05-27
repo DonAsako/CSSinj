@@ -1,4 +1,6 @@
 import asyncio
+import contextlib
+import signal
 
 from aiohttp import web
 
@@ -30,19 +32,26 @@ class Server:
             timeout=getattr(args, 'timeout', 3.0),
         )
 
-    async def start(self):
+    async def run(self) -> None:
         self.runner = web.AppRunner(self.app)
         await self.runner.setup()
-
         site = web.TCPSite(self.runner, self.hostname, self.port)
         await site.start()
         Console.log(LogLevel.SERVER, f"Attacker's server started on {self.hostname}:{self.port}")
-        while True:
-            await asyncio.sleep(3600)
 
-    async def stop(self):
+        stop_event = asyncio.Event()
+        loop = asyncio.get_running_loop()
+        for sig in (signal.SIGINT, signal.SIGTERM):
+            with contextlib.suppress(NotImplementedError):
+                loop.add_signal_handler(sig, stop_event.set)
+        try:
+            await stop_event.wait()
+        finally:
+            await self.stop()
+
+    async def stop(self) -> None:
         Console.log(LogLevel.SERVER, "Attacker's server cleaning up.")
-        if self.runner:
+        if self.runner is not None:
             await self.runner.cleanup()
         Console.log(LogLevel.SERVER, "Attacker's server stopped.")
 
