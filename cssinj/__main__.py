@@ -17,69 +17,67 @@ BANNER = """
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        prog="CSSINJ.py",
+        prog='CSSINJ.py',
         description=(
-            "A tool for exfiltrating sensitive information using CSS injection, "
-            "designed for penetration testing and web application security assessment."
+            'A tool for exfiltrating sensitive information using CSS injection, '
+            'designed for penetration testing and web application security assessment.'
         ),
-        epilog="A tool by \33[0;36mDonAsako\033[0m",
+        epilog='A tool by \33[0;36mDonAsako\033[0m',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
-        "-H",
-        "--hostname",
-        required=True,
-        help="Attacker hostname or IP address",
-        default="127.0.0.1",
+        '-H',
+        '--hostname',
+        default='127.0.0.1',
+        help='Attacker hostname or IP address',
     )
     parser.add_argument(
-        "-p",
-        "--port",
-        required=True,
+        '-p',
+        '--port',
         type=int,
-        help="Port number of attacker",
-        default="5005",
+        default=5005,
+        help='Port number of attacker',
     )
     parser.add_argument(
-        "-e",
-        "--element",
+        '-e',
+        '--element',
         required=False,
-        default="input",
-        help="Specify the HTML element to extract data from",
+        default='input',
+        help='Specify the HTML element to extract data from',
     )
     parser.add_argument(
-        "-a",
-        "--attribut",
+        '-a',
+        '--attribut',
         required=False,
-        default="value",
-        help="Specify an element Attribute Selector for exfiltration",
+        default='value',
+        help='Specify an element Attribute Selector for exfiltration',
     )
     parser.add_argument(
-        "-d",
-        "--details",
-        action="store_true",
-        help="Show detailed logs of the exfiltration process, including extracted data.",
+        '-d',
+        '--details',
+        action='store_true',
+        help='Show detailed logs of the exfiltration process, including extracted data.',
     )
     parser.add_argument(
-        "-m",
-        "--method",
-        default="recursive",
+        '-m',
+        '--method',
+        default='recursive',
         choices=list_strategies(),
-        help="Specify the type of exfiltration",
+        help='Specify the type of exfiltration',
     )
     parser.add_argument(
-        "-o",
-        "--output",
-        nargs="?",
-        const="output.json",
-        help="File to store the exfiltrated data in JSON format",
+        '-o',
+        '--output',
+        nargs='?',
+        const='output.json',
+        help='File to store the exfiltrated data in JSON format',
     )
     parser.add_argument(
-        "-t",
-        "--timeout",
+        '-t',
+        '--timeout',
         type=float,
         default=3.0,
-        help="Timeout in seconds before considering exfiltration complete (useful for font-face)",
+        help='Timeout in seconds before considering exfiltration complete (useful for font-face)',
     )
     return parser.parse_args()
 
@@ -91,6 +89,6 @@ def main():
     CSSInjector().start(args)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
     sys.exit(0)
