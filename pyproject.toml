@@ -9,7 +9,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cssinj"
-version = "0.2.1"
+version = "0.3.0"
 description = "A python tool to exploit CSS injection vulnerabilities to exfiltrate sensitive information from web applications."
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
@@ -30,6 +30,7 @@ cssinj = "cssinj.__main__:main"
 [project.urls]
 Homepage = "https://github.com/DonAsako/CSSinj"
 Issues = "https://github.com/DonAsako/CSSinj/issues"
+
 
 [dependency-groups]
 dev = [
