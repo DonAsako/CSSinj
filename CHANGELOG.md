@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.4.0 (2026-07-27)
+
+### Features
+
+- Add --version flag
+  ([`fcd32d3`](https://github.com/DonAsako/CSSinj/commit/fcd32d30a6c9b747a32b671a3d2b9fef11993f4a))
+
+
 ## v0.3.0 (2026-05-28)
 
 ### Bug Fixes
