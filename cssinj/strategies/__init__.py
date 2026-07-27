@@ -8,6 +8,12 @@ from .recursive import RecursiveStrategy
 STRATEGIES: dict[str, type[BaseExfiltrationStrategy]] = {
     'recursive': RecursiveStrategy,
     'font-face': FontFaceStrategy,
+}
+
+# Work-in-progress strategies, intentionally kept out of the CLI until they
+# actually exfiltrate data. See the "Complete Exfiltration (Blind)" roadmap
+# in the README.
+_EXPERIMENTAL: dict[str, type[BaseExfiltrationStrategy]] = {
     'complete': CompleteStrategy,
 }
 

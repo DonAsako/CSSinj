@@ -14,11 +14,14 @@ description = "A python tool to exploit CSS injection vulnerabilities to exfiltr
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
 authors = [{ name = "DonAsako" }]
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 keywords = ["CSS", "BugBounty", "Web", "cssinj"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Operating System :: OS Independent",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
 ]
@@ -101,7 +104,7 @@ patch_tags = ["fix", "perf"]
 
 [tool.ruff]
 line-length = 120
-target-version = "py310"
+target-version = "py311"
 exclude = [".venv", "uv.lock", "__pycache__", "pyproject.toml"]
 
 [tool.ruff.format]
@@ -263,7 +266,7 @@ allow-magic-value-types = ["int", "str", "bytes"]
 # ============================================================================
 
 [tool.mypy]
-python_version = "3.13"
+python_version = "3.11"
 files = ["cssinj", "tests"]
 namespace_packages = true
 pretty = true

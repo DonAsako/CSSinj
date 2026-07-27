@@ -86,7 +86,6 @@ def test_id_counter_is_per_instance(make_client: ClientFactory) -> None:
 def test_client_dataclass_defaults() -> None:
     c = Client(host='h', accept=None, headers={}, event=asyncio.Event())
     assert c.id == 0  # only set on register
-    assert c.status is True
     assert c.counter == 0
     assert c.data == ''
     assert c.elements == []

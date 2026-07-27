@@ -6,15 +6,24 @@ on:
   pull_request:
     branches: [main]
 
+# Least privilege by default; jobs opt into more where needed.
 permissions:
-  contents: write
-  id-token: write
+  contents: read
+
+# Cancel superseded runs on the same PR; never cancel main / release runs.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   # ── Run tests and linters on every push / PR ─────────────────────────────
   ci:
     name: Tests & Lint
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
 
     steps:
       - uses: actions/checkout@v4
@@ -22,6 +31,7 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: uv sync
@@ -41,6 +51,8 @@ jobs:
     needs: ci
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     concurrency:
       group: release
       cancel-in-progress: false
@@ -77,7 +89,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.release.outputs.tag }}
-          fetch-depth: 0
 
       - uses: astral-sh/setup-uv@v5
         with:

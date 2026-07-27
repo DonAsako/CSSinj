@@ -14,7 +14,6 @@ class Client:
     accept: str | None
     event: asyncio.Event
     id: int = dataclasses.field(default=0)
-    status: bool = dataclasses.field(default=True)
     counter: int = dataclasses.field(default=0)
     elements: list[Element] = dataclasses.field(default_factory=list)
     data: str = dataclasses.field(default='')

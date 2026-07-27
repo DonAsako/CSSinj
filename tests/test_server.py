@@ -131,6 +131,20 @@ async def test_recursive_start_emits_import(aiohttp_client: AiohttpClient) -> No
     assert '/n?' in body
 
 
+async def test_recursive_next_route_emits_probe_and_end_beacons(aiohttp_client: AiohttpClient) -> None:
+    srv = _build_server(method='recursive')
+    client = await aiohttp_client(srv.app)
+    await client.get('/start')  # registers cid=1 and releases the event
+    resp = await client.get('/n', params={'cid': '1'})
+    assert resp.status == 200
+    assert resp.headers['Content-Type'].startswith('text/css')
+    body = await resp.text()
+    assert "@import url('//" in body
+    assert '/e?' in body  # completeness (end) beacon
+    assert '/v?' in body  # extraction probe
+    assert srv.clients[0].counter == 1
+
+
 async def test_recursive_handle_end_records_value(aiohttp_client: AiohttpClient) -> None:
     srv = _build_server(method='recursive')
     client = await aiohttp_client(srv.app)

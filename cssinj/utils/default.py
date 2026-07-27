@@ -1,4 +1,3 @@
-HTTP_HEADERS: list[str] = []
 ELEMENTS = [
     'a',
     'abbr',
