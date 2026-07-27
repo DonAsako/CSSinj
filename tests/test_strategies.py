@@ -13,13 +13,19 @@ from .conftest import ClientFactory
 
 
 def test_list_strategies_contains_known() -> None:
-    assert set(list_strategies()) == {'recursive', 'font-face', 'complete'}
+    assert set(list_strategies()) == {'recursive', 'font-face'}
+
+
+def test_complete_is_not_exposed_on_cli() -> None:
+    # CompleteStrategy is still WIP: reachable as a class but not selectable.
+    assert 'complete' not in list_strategies()
+    with pytest.raises(ValueError, match='Unknown strategy'):
+        get_strategy('complete')
 
 
 def test_get_strategy_returns_class() -> None:
     assert get_strategy('recursive') is RecursiveStrategy
     assert get_strategy('font-face') is FontFaceStrategy
-    assert get_strategy('complete') is CompleteStrategy
 
 
 def test_get_strategy_unknown_raises() -> None:

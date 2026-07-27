@@ -2,6 +2,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from cssinj import __version__
 from cssinj.console import setup_logging
 from cssinj.exfiltrator.cssinjector import CSSInjector
 from cssinj.strategies import list_strategies
@@ -25,6 +26,11 @@ def parse_args() -> argparse.Namespace:
         ),
         epilog='A tool by \33[0;36mDonAsako\033[0m',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        '--version',
+        action='version',
+        version=f'cssinj {__version__}',
     )
     parser.add_argument(
         '-H',

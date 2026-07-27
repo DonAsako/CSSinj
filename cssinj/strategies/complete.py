@@ -7,8 +7,9 @@ from cssinj.utils.dom import Attribute, Element
 
 class CompleteStrategy(BaseExfiltrationStrategy):
     """
-    Complete exfiltration strategy.
-    Exfiltrates the complete DOM structure of the HTML.
+    Complete exfiltration strategy (WORK IN PROGRESS).
+
+    Intended to blindly exfiltrate the full DOM structure of the HTML.
     """
 
     name = 'complete'
